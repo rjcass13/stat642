@@ -36,11 +36,9 @@
 
 \newpage
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section{Jan 8}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Point Estimation}
 
-\subsection{Point Estimation}
 \underline{Definition}: A point estimator is any scalar (or vector) -valued function of the sample. 
 $(x_1, ... x_n) \sim f(x|\theta)$
 
@@ -103,6 +101,71 @@ Let's say $x_i \iiddist N(\mu, \sigma^2)$ and we want to estimate $\tau(\theta) 
     \item Why should it work? Let's say $\theta^*$ is the true value of $\theta$. Then Law of Large Numbers says: $\hat{\mu}_k \pto \mu_k(\theta*)$. Then we are solving $\mu_k(\theta) = \hat{\mu}_k \approx \mu_k(\theta^*)$
 \end{itemize}
 
+\underline{Example}: $X_i \iiddist Bin(m, \theta), i=1,...,n$ (m is known)
+
+Find the MM estimator of $\tau(\theta) = ln\frac{\theta}{1-\theta}$
+\begin{enumerate}
+    \item Find MM for $\theta$ ($\hat{\theta}_{MM}$)
+    \item Plug in ($\hat{\tau}_{MM}(\theta) = \tau(\hat{\theta}_{MM})$)
+    \item $\hat{\tau}_{MM}(\theta) = ln\frac{\overline{X}/m}{1-\overline{X}/m}$
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Maximum Likelihood}
+
+$X = (X_1, ..., X_n) \sim f(x|\theta), \theta \in \Theta \subset \real^k$
+
+Notation: $f(x;\theta)$: function of $x$ indexed at $\theta$. Basically, given some set value of the $\theta$.
+
+\underline{Likelihood Function}: The likelihood function is: $L(\theta;x) = f(x|\theta)$
+
+Notes: 
+\begin{itemize}
+    \item $L$ is a function of $\theta$ for each $x \in \mathbb{X}$ (in sample space)
+    \item Plugging in $X$ for $x$ gives $L(\theta;X)$, a stochastic process (ie. plug in a random $X$ makes this a random function for $\theta$)
+    \item The log-likelihood function is $l(\theta;x) = ln [L(\theta;x)]$
+    \item If $x_i \iiddist f(x_i | \theta)$ ($f$ is marginal dist.), then $l(\theta;x) = \sum_{i=1}^{n} ln [f(x_i|\theta)]$ (because $x_i \iiddist$, the sum is just a transformation and we can apply LLN, CLT, etc.)
+\end{itemize}
+
+\underline{Maximum Likelihood Estimate}: If $x \in \mathbb{X}$ is observed, a maximum likelihood estimate of $\theta, \hat{\theta}(x)$, is any value $\theta \in \Theta$ that maximizes $L(\theta|x)$.
+
+$\hat{\theta}(x) = \underset{\theta \in \Theta}{argmax} [ L(\theta|x) ]$
+
+This is a function of observed data (an estimate, not an estimator). 
+
+\underline{Maximum Likelihood Estimator}: A maximum likelihood estimator (MLE) is $\hat{\theta} = \hat{\theta}(X)$
+
+If an ML estimate exists, then $\hat{\theta}(x) = \underset{\theta \in \Theta}{argmax} [l(\theta;x)]$. This is because $ln(x)$ is a strictly increasing function.
+
+
+\underline{Why does maximum likelihood work?} Can we show that $\hat{\theta} \approx \theta_0$ (true parameter)?
+
+Assume $X_1, ..., X_n \iiddist f(x_i|\theta)$. $l(\theta | x) = \sum_{i=1}^n ln[f(x_i|\theta)]$
+
+$\frac{1}{n} l(\theta | x) = \frac{1}{n}\sum_{i=1}^n ln[f(x_i | \theta)] \pto \EX_{\theta_0}(ln[f(x|\theta)]) = \int_{\mathbb{X}} ln[f(x|\theta)]f(x|\theta_0)dx$
+
+It would make sense that $\hat{\theta}(x) = \underset{\theta \in \Theta}{argmax}[l(X|\theta)] \approx \underset{\theta \in \Theta}{argmax}\EX_{\theta_0}(ln[f(X|\theta)])$ which we hope $= \theta_0$.
+
+Define $D(\theta;\theta_0) = \EX_{\theta_0}(ln[f(X|\theta)])$. We will show that $D(\theta_0;\theta_0) - D(\theta;\theta_0) \ge 0 \forall \theta$.
+
+Kullback-Liebler Divergence: Let $f_0$ and $f_1$ be any two PDFs/PMFs. The Kullback-Liebler divergence from $f_0$ to $f_1$ is $K(f_0, f_1) = -\EX_{f_0}[ln\frac{f_1(x)}{f_0(x)}]$
+
+$D(\theta_0;\theta_0) - D(\theta;\theta_0) = \EX_{\theta_0}[ln(f(X|\theta_0)) - ln(f(X|\theta))] = -\EX_{\theta_0}[ln\frac{f(X|\theta)}{f(X|\theta_0)}]$.
+
+Lemma: For any two PDFs/PMFs $f_0, f_1, K(f_0, f_1) \ge 0$, with equality iff $f_0 \equiv f_1$.
+
+Remeber Jensen's Inequality: When $g(x)$ is convex (happy), $\EX[g(x)] \ge g(\EX[x])$.
+
+\underline{Proof (Discrete Case)}: Suppose $X \sim f_0$ and set $Z = \frac{f_1(x)}{f_0(x)}$. Let $S_j = \{x: f_j(x) > 0\}$
+
+Since $g(z) = - ln(z)$ is convex and $\EX_{f_0}(z) = \sum_{x \in S_0} \frac{f_1(x)}{f_0(x)}f_0(x) = \sum_{x \in S_0} f_1(x) \le 1$.
+
+By Jensen's Inequality: $K(f_0,f_1) = -\EX_{f_0}[ln(Z)] = \EX_{f_0}[g(z)] \underset{1}{\ge} g(\EX_{f_0}(z)) \underset{2}{\ge} 0$. 
+
+This is only 'equal' when $g$ is linear. Since $g(z)$ is not linear, equality in $1$ only happens iff $Z = \frac{f_1(x)}{f_0} = c \ne 0, \forall x \in S_0, [S_0 \subset S_1]$. Equality in $2$ only happens iff $\sum_{x \in S_0} f_1(x) = 1, [S_1 \subset S_0]$. 
+
+Suppose 1 and 2 are equalities. $1 = \sum_{x \in S_1}f_1(x) = \sum_{x \in S_1}c f_0(x) = c \sum_{x \in S_1} f_0(x) = c \sum_{x \in S_0} f_0(x) = c$
 
 
 \end{document}
