@@ -167,5 +167,237 @@ This is only 'equal' when $g$ is linear. Since $g(z)$ is not linear, equality in
 
 Suppose 1 and 2 are equalities. $1 = \sum_{x \in S_1}f_1(x) = \sum_{x \in S_1}c f_0(x) = c \sum_{x \in S_1} f_0(x) = c \sum_{x \in S_0} f_0(x) = c$
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Decision Theory}
+
+\subsection{Bayesian Estimation}
+$x_1, ..., x_n \sim f(x|\theta), \theta \in \Theta$
+
+\underline{Definition}: A priori distribution $\pi$ for $\theta$ is a PDF/PMf over $\Theta$: $\int_{\Theta} \pi(\theta)d\theta = 1, \pi(\theta) \ge 0, \theta \in \Theta$
+
+Main Idea: $\pi$ tells us what $\theta$s are "important". $\pi(\theta|x)$ tells us which are important afetr knowing $x$.
+
+\underline{Definition}: If we observed $x \in X$, the posterior distribution is: $\pi(\theta|x) = \frac{f(x|\theta)\pi(\theta)}{\int_{\Theta} f(\theta|x)\pi(\theta)d\theta}$
+
+Here, $m(x) = \int_{\Theta} f(\theta|x)\pi(\theta)d\theta$ is the "marginal" distirbution of $x$. 
+
+Some logical things to do with $\pi(\theta|x)$:
+\begin{enumerate}
+    \item Estimate $\theta$ using a measure of 'center':
+    \item  $\hat{\theta} = \EX(\theta|x) = \int_{\Theta} \theta \pi(\theta|x)d\theta$
+    \item $0.5 = \int_0^{\hat{\theta}}pi(\theta|x)d\theta$
+    \item $\hat{\theta}(x) = \underset{\theta \in \Theta}{argmax} [\pi(\theta|x)]$
+\end{enumerate}
+
+\underline{Example}: 
+$x_i \iiddist Bern(\theta), \theta \sim Beta(\alpha, \beta)$ (the common prior for the Bernoulli is the Beta: also defined on 0:1)
+
+$$
+\begin{aligned}
+\pi(\theta) 
+&= \frac{1}{\beta(\alpha, \beta)}\theta^{\alpha-1}(1-\theta)^{\beta - 1}, 0<\theta<1 \\
+&\propto \theta^{\alpha-1}(1-\theta)^{\beta - 1}
+\end{aligned}
+$$
+
+$f(x|\theta) = \prod_{i=1}^n \theta^{x_i}(1-\theta)^{1-x_i} = \theta^{\sum x_i}(1-\theta)^{n-\sum x_i}$
+
+$\pi(\theta|x) = \frac{\theta^{\sum x_i}(1-\theta)^{n-\sum x_i}\theta^{\alpha - 1}(1-\theta)^{\beta - 1}}{B(\alpha, \beta)\int_0^1 \frac{\theta^{\sum x_i}(1-\theta)^{n-\sum x_i}\theta^{\alpha - 1}(1-\theta)^{\beta - 1}}{B(\alpha, \beta)}d\theta}$
+
+Denominator is just a function of x (integrating out $\theta$) and some constants. 
+
+$\implies \pi(\theta|x) \propto \theta^{\alpha + \sum x_i - 1}(1-\theta)^{\beta + n - \sum x_i - 1}$
+
+i.e., $\theta|x \sim Beta(\alpha + \sum x_i, \beta + n - \sum x_i)$
+
+The posterior mean is $\hat{\theta}(x) = \frac{\alpha + \sum x_i}{\alpha + \beta + n}$
+
+Take-aways from this example:
+\begin{enumerate}
+    \item Both $\pi(\theta)$ and $\pi(\theta|x)$ were Beta distributions. We say then that the Beta is conjugate for the Bernoulli likelihood
+    \item We did not need to compute the $m(x)$. In practice, usually can't compute it and instead rely on smapling (MCMC, etc.)
+    \item The usual frequentist estimate is $\bar{x}$ (this would be the limiting case of $\alpha = \beta = 0$). In fact, $\hat{\theta}_B(x) = \frac{\alpha}{\alpha + \beta + n} + \frac{\sum x_i}{\alpha + \beta + n}= \left(\frac{\alpha}{\alpha + \beta}\right)\left(\frac{\alpha + \beta}{\alpha + \beta + n}\right) + \bar{X}\left(\frac{n}{\alpha + \beta + n}\right)$. That is, the posterior mean is a weighted average of the prior mean and the MLE. As $\alpha$ or $\beta$ go to infinity, result is dominated by prior. As $n$ goes to infitinty, get more weight on the $\bar{X}$
+\end{enumerate}
+
+\subsection{Conjugate Priors}
+\underline{Definition}:
+Let $f(x|theta)$ be a gamily of PMFs/PDFs indexed by $\theta \in \Theta$. A family of distributions is $\Pi = \{\pi(\theta)\}$ is said to be conjugate for $f(x|\theta)$ if $\pi \in \Pi \implies \pi(\theta|x) \in \Pi$. 
+
+Note: Number of parameters in conjugate family is always going to be 1 more than the base distribution.
+
+If $f(x|\theta)$ is an eponential family, $f(x|\theta) = (\pi h(x_i))e^{\sum_{j=1}^k T_j(x)w_j(\theta) + n ln[c(\theta)]}, T_j(x) = \sum_{i=1}^n t_j(x_i)$
+
+A conjugate family with hyperparameter $t \in \real^{k+1}$ is $\pi_t(\theta) \propto e^{\sum_{j=1}^k t_j(x)w_j(\theta) + t_{k+1} ln[c(\theta)]}$ 
+
+where $t$ must satisfy $\int_\theta e^{\sum_{j=1}^k t_j(x)w_j(\theta) + t_{k+1} ln[c(\theta)]} < \infty$
+
+
+\underline{Example}:
+$X_i \iiddist N(\theta, \sigma^2), \sigma^2$ is known
+
+
+$$
+\begin{aligned}
+f(x|\theta) 
+&= (2\pi \sigma^2)^{-n/2} e^{1/(2\sigma^2)\sum(x_i - \theta)^2} \\ 
+&= h(x) e^{\frac{n\bar{x}}{\sigma^2}\theta - \frac{n}{2\sigma^2}\theta^2}
+\end{aligned}
+$$
+
+Thus the conjugate prior has the form $\pi_t(\theta) \propto e^{t_1 \theta + t_2\theta^2}$. This is e to a quadratic which must be a Normal. We know $t_2$ must be negative so the tails die out. 
+
+Since this must be a normal distirbution, find the mean and variance in terms of $t_1$ and $t_2$:
+
+Let $\nu, \tau^2$ represent mean and variance that correspond to $(t_1, t_2)$. $t_2 = \frac{-1}{2\tau^2}, t_1 = \frac{\nu}{\tau^2}$
+
+$\pi_t(\theta) \propto e^{\frac{n\bar{x}}{\sigma^2}\theta - \frac{n}{2\sigma^2}\theta^2} e^{t_1 \theta + t_2\theta^2} = e^{(t_1 + \frac{n\bar{x}}{\sigma^2})\theta + (t_2 - \frac{n}{2\sigma^2})\theta^2} = e^{t_1^*\theta + t_2^*\theta^2}$
+
+$\implies \theta|x \sim N(\nu^*, \tau^{*2})$ where $\tau^{*2} = -\frac{1}{2t_2^*} = \frac{\sigma^2\tau^2}{n \tau^2 + \sigma^2}, \nu^* = \frac{\tau^2}{\tau^2 + \sigma^2/n}\bar{X} + \frac{\sigma^2/n}{\tau^2 + \sigma^2/n}\nu$
+
+
+\subsection{Bayes Rules}
+\underline{Definition}: A Bayes rule for a loss function $l(t|\theta)$ and a prior $\pi$ is an estimator $W^*$ for which the Bayes risk is minimized: $r_{\pi}(W^*) \le r_{\pi}(W) \forall W$
+
+$$
+\begin{aligned}
+r_{\pi}(W) 
+&= \int_{\Theta} R(\theta;W)\pi(\theta)d\theta \\
+&= \int_{\Theta} \EX[l(W(x), \theta)|\theta]\pi(\theta)d\theta \\
+&= \int_\mathbb{X} \EX[l(W(x), \theta)|X=x]m(x)dx \\
+&= \int_\mathbb{X} r_{\pi}(W(x)|x)m(x)dx
+\end{aligned}
+$$
+
+If $r_{\pi}(W^*(x)|x) \le r_{\pi}(W(x)|x)$, then $W^*$ is the Bayes Rule
+
+\underline{Example}: $l(t, \theta) = (t-\theta)^2$
+
+$$
+\begin{aligned}
+r_{\pi}(w(x) | x) 
+&= \EX[(w(x) - \theta)^2 | X=x] \\
+&= \int(w(x) - \theta)^2\pi(\theta|x)d\theta \\
+&= \int_{\Theta}(w^2(x) - 2W(x)\theta + \theta^2)\pi(\theta|x)d\theta \\
+&= w^2(x) - 2w(x)\EX[\theta|X=x] + \EX[\theta^2|X=x] \implies w^*(x) \\
+&= \frac{2\EX[\theta|X=x]}{2(1)} \\
+&= \EX[\theta|X=x]
+\end{aligned}
+$$
+
+When using squared-error loss, the Bayes Rule is the posterior mean, when using absolute value squared-error loss it's the posterior median. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Jan 29}
+
+REVIEW
+
+$r_{\pi}(w) = \int_\mathbb{X} r_{\pi}(W(x)|x)m(x)dx$
+
+$r_{\pi}(w(x) | x)  = \EX[l(W(x), \theta)|X=x]$
+
+If $l(t, \theta) = (t-\theta)^2 \implies$ The Bayes Rule is $\EX[\theta|X=x]$
+
+If $l(t, \theta) = |t-\theta| \implies w^*(x)$ is the posterior median. 
+
+
+A reasonable loss smight be realted to SEL or AEL (Squared/Absolute Error Loss): $l(t, \theta) = g(\theta)(t-\theta)^2$
+
+$$
+\begin{aligned}
+r_{\pi}(w(x) | x)  
+&= \int_{\Theta} l(t, \theta)\pi(\theta|x)d\theta \\
+&= \int_{\Theta} g(\theta)(t-\theta)^2\pi(\theta|x)d\theta \\
+&= \int_{\Theta} (t-\theta)^2[g(\theta)\pi(\theta|x)]d\theta
+\end{aligned}
+$$
+
+Provided $\int_{\Theta} [g(\theta)\pi(\theta|x)]d\theta$ is finite (integrable), it becomes the Kernel of another function: define: $\tilde{\pi}(\theta|x) \propto g(\theta)\pi(\theta|x)$
+
+Then $r_{\pi}(w(x) | x) \propto \int_{\Theta} (t-\theta)^2\tilde{\pi}(\theta|x)d\theta = r_{\tilde{\pi}}(w(x)|x)$ (under SEL) $\implies w^*(x) = \EX_{\tilde{\pi}}(\theta|X=x)$
+
+\underline{Example}: $X_i \iiddist Exp(\theta)$
+
+$\pi(\theta)$ is the $Gamma(\alpha, \beta)$
+
+$l(t, \theta) = (\frac{t}{\theta} - 1)^2 = \frac{(t-\theta)^2}{\theta^2} \implies g(\theta) = \frac{1}{\theta^2}$
+
+$g(\theta)\pi(\theta|x) \propto \frac{1}{\theta^2}\theta^n e^{\theta \sum x_i}\theta^{\alpha-1}e^{-\theta/\beta} = \theta^{\alpha+n-3}e^{-\theta(\sum x_i + \beta^{-1})}$ which is a $Gamma(\alpha + n -2, (\sum x_i + \beta^{-1})^{-1})$ (note that we need n >= 2 to have valid parameters).
+
+The Bayes Rule is $w^*(x) = \frac{\alpha + n - 2}{\sum x_i + \beta^{-1}}$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Best Unbiased Estimation}
+
+Recall: $MSE_{\theta}(w) = \EX[(w-\theta)^2]$ (this is a risk function, so common it has its own name!)
+
+\underline{Example}: $X_i \iiddist N(\mu, \sigma^2)$
+
+1. $w(x) = \bar{x}, MSE_{\mu, \sigma^2}(\bar{x}) = \EX_{\mu, \sigma^2}[(\bar{x} - \mu)^2]$
+
+Since $\bar{x} \sim N(\mu, \sigma^2/n), MSE_{\mu, \sigma^2}(\bar{x}) = Var(\bar{x}) = \frac{\sigma^2}{n}$
+
+2. Let $s^2 = \frac{1}{n-1}\sum(x_i - \bar{x})^2 \sim \frac{\sigma^2}{n-1}\chi^2_{n-1}$
+
+$MSE_{\mu, \sigma^2}(s^2) = \EX_{\mu, \sigma^2}[(s^2 - \sigma^2)^2] = Var(s^2) = \frac{\sigma^4}{(n-1)^2}2(n-1) = \frac{2\sigma^4}{n-1}$
+
+In general: 
+$$
+\begin{aligned}
+MSE_{\theta}(w) 
+&= \EX_{\theta}[(w-\theta)^2] \\
+&= \EX_{\theta}[(w - \EX_{\theta}[w] + \EX_{\theta}[w] - \theta)^2] \\
+&= \EX_{\theta}[(w - \EX_{\theta}[w])^2] + (\EX_{\theta}[w] - \theta)^2 + 2\EX_{\theta}[(w - \EX_{\theta}[w])(\EX_{\theta}[w] - \theta)] \\
+&= Var_{\theta}(w) + Bias^2_{\theta}(w), Bias_{\theta}(w) = \EX_{\theta}[w] - \theta
+\end{aligned}
+$$
+
+
+\underline{Example}: $X_i \iiddist N(\mu, \sigma^2)$
+
+$s^2 = \frac{1}{n-1}\sum(x_i - \bar{x})^2$
+
+$\hat{\theta} = \frac{1}{n}\sum(x_i - \bar{x})^2$ (MLE/MM)
+
+
+$$
+\begin{aligned}
+MSE_{\sigma^2}(\hat{\sigma}^2) 
+&= Var_{\hat{\sigma}^2}(\hat{\sigma}^2) + Bias^2_{\sigma^2}(\hat{\sigma}^2) \\
+&= Var_{\sigma^2}(\frac{n-1}{n}s^2) + Bias^2_{\sigma^2}(\frac{n-1}{n}s^2) \\
+&= (\frac{n-1}{n})^2\frac{2\sigma^4}{n-1} + [\EX_{\sigma^2}(\frac{n-1}{n}s^2) - \sigma^2]^2 \\
+&= \frac{2\sigma^4(n-1)}{n^2} + [\frac{n-1}{n}\sigma^2 - \sigma^2]^2 \\
+&= \frac{2\sigma^4}{n-1}(\frac{n-1}{n})^2 + \frac{\sigma^2}{n^2} \\
+&= \frac{2\sigma^4}{n-1}[\frac{(n-1/2)(n-1)}{n^2}] < MSE_{\sigma^2}(s^2)
+\end{aligned}
+$$
+
+
+Let $\tau(\theta)$ be some estimand:
+
+\underline{Define}: $w$ is said to be unbiased for $\tau(\theta)$ if $\EX_{\theta}(w) = \tau(\theta) \forall \theta \in \Theta$
+
+\underline{Definition}: An estimator $w^*$ is said to be a (uniformly) minimum variance unbiased estimator (MVUE) of $\tau(\theta)$ if:
+
+1. $w^*$ is unbiased for $\tau(\theta)$
+
+2. For any $w$ unbiased for $\tau(\theta), Var(w) \ge Var_{\theta}(w^*)$
+
+\underline{Example}: $x_1, ..., x_n \iiddist, \EX[x_i] = \theta$
+
+Let $w_1 = x_1, w_2 = \bar{x}$. Both are unbiased, but $\bar{x}$ has smaller variance. To prove the MVUE, we'd have to compare $w_2$ to all other $w$s
+
+\underline{Example}: $x_i \iiddist Pois(\lambda)$
+
+Both $\bar{x}, s^2$ are unbiased. $\bar{x}$ is simpler, and also, $Var(\bar{x}) = \frac{\lambda}{n} < Var_{\lambda}(s^2)$
+
+
+Two ways to establish that an estimator is an MVUE:
+
+1. Find a lower bound $L(\theta)$ such that $Var_{\theta}(w) \ge L(\theta)$ for all unbiased $w$. Then, $Var_{\theta}(w^*) = L(\theta), w^*$ is MVUE
+
+2. Show that the MVUE has characterstic properties and construct $w^*$ with those properties
 
 \end{document}
