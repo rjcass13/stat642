@@ -28,6 +28,8 @@
 \renewcommand{\lim}{\Oldlim\limits} 
 \newcommand{\infint}{\int_{-\infty}^{\infty}}
 \newcommand{\iiddist}{\overset{\mathrm{iid}}{\sim}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\boldred}[1]{\textbf{\textcolor{red}{#1}}}
 
 
 \begin{document}
@@ -399,5 +401,92 @@ Two ways to establish that an estimator is an MVUE:
 1. Find a lower bound $L(\theta)$ such that $Var_{\theta}(w) \ge L(\theta)$ for all unbiased $w$. Then, $Var_{\theta}(w^*) = L(\theta), w^*$ is MVUE
 
 2. Show that the MVUE has characterstic properties and construct $w^*$ with those properties
+
+
+
+\subsection{Cramer-Rao Lower Bound}
+
+The score function is $\psi(x;\theta) = \frac{\partial}{\partial \theta}ln(f(x|\theta))$
+
+CR Condition: For any statistic $W$ with finite expectation - 
+
+($|\EX_{\theta}[W]| < \infty \forall \theta$), $\frac{d}{d\theta}\EX_{\theta}[W] = \frac{d}{d\theta} \int_{\mathbb{X}}W(x)f(x|\theta)dx = \int_{\mathbb{X}}\frac{\partial}{\partial\theta}W(x)f(x|\theta)dx$
+
+Notice: $\frac{\partial f(x|\theta)}{\partial \theta} = \frac{\partial f(x|\theta)}{\partial \theta}\frac{f(x|\theta)}{f(x|\theta)} = \frac{\partial ln(f(x|\theta))}{\partial \theta}f(x|\theta) = \psi(x;\theta)f(x|\theta)$
+
+Thus: $\underline{\frac{d}{d \theta} \EX_{\theta}[W] = \int_{\mathbb{X}} W(x)\psi(x;\theta)f(x|\theta)dx}$
+
+
+\underline{Definition}: The Information Number (Fisher Information) is: 
+
+$I_n(\theta) = \EX_{\theta}[\psi^2(x;\theta)]$ (Scalar)
+
+$I_n(\theta) = \EX_{\theta}[\psi(x;\theta)\psi(x;\theta)^{\top}]$ (Vector)
+
+\underline{Fact}: If CR condition holds, then the Fisher Information is the variance of the score: 
+
+$I_n(\theta) = Var_{\theta}(\psi(x;\theta))$ (note: this means that $\EX_{\theta}[\psi(x;\theta)] = 0$)
+
+\underline{Theorem}: CRLB
+
+Suppose the CR Condition holds and $0 < I_n(\theta) < \infty$. If $W$ is a statistic satisfying:
+
+i) $\EX_{\theta}[W] = \tau(\theta), |\tau(\theta)| < \infty$ (unbiased estimator for $\tau(\theta)$) and 
+
+ii) $Var_{\theta}(W) < \infty \forall \theta$
+
+then $Var_{\theta}(W) \ge \frac{(\tau'(\theta))^2}{I_n(\theta)}$ (for scalar $\theta$)
+
+
+Remember: Cauchy-Schwartz: $|x^{\top}y| \le \norm{x}\norm{y} \implies |\EX[xy] \le \EX[x^2]^{1/2}\EX[y^2]^{1/2}$. Equality only happens when $x = ay$
+
+
+\underline{Proof}: CRLB
+
+Apply CS inequality to $Y_{\theta} = W - \tau(\theta), z_{\theta} = \psi(x;\theta)$
+
+$|\tau'(\theta)| = |\frac{d}{d\theta}\EX_{\theta}[W]| = |\int_{\mathbb{X}} W(x)\psi(x;\theta)f(x|\theta)dx| = |\EX_{\theta}W \psi(x;\theta)|$ (here, because $\psi$ has mean zero we can add constant on $W$) $ = |\EX_{\theta}[Y_{\theta}z_{\theta}]| \le [Var_{\theta}(Y_{\theta})Var_{\theta}(z_{\theta})]^{1/2} = [Var_{\theta}(W)I_n(\theta)]^{1/2} \implies Var_{\theta}(W) \ge \frac{(\tau'(\theta))^2}{I_n(\theta)}$
+
+
+\underline{Comments}: 
+
+1) To apply this result, recall that we have equality in the CRLB iff $W(X) - \tau(\theta)  = k(\theta)\psi(x;\theta)$ (some constant times the score, refer to Cauchy Schwartz again). \boldred{THIS IS VERY IMPORTANT!!!!!}
+
+2) In the iid case, let $I_1(\theta) = Var_{\theta}(\frac{d}{d\theta}ln(f(x_1|\theta)))$. Then, 
+
+$$
+\begin{aligned}
+    I_n(\theta) 
+    &= Var_{\theta}(\frac{d}{d\theta}ln(f(\statvec{x}|\theta))) \\
+    &= Var_{\theta}(\sum_{i=1}^n \frac{\partial}{\partial \theta} ln(f(\statvec{x}|theta))) \\
+    &= \sum_{i=1}^n Var_{\theta}(\frac{\partial}{\partial \theta} ln(f(x_i|\theta))) \\
+    &= nI_1(\theta)
+\end{aligned}
+$$
+
+3) If $\frac{d}{d \theta} \EX_{\theta}[\psi(x;\theta)] = \int_{\mathbb{X}} \frac{\partial}{\partial \theta}[\psi(x;\theta)f(x|\theta)]dx$ then: $I_n(\theta) = -\EX_{\theta}[\frac{\partial}{\partial \theta} \psi(x;\theta)]$ (when iid:) $= -n\EX_{\theta}[\frac{\partial^2}{\partial \theta^2} ln(f(x_1|\theta))]$
+
+4) If $\tau(\theta)$ is a vector, $Var_{\theta}(W) \succeq \tau'(\theta)^{\top}I_n^{-1}(\theta)\tau'(\theta)$ ($A \succeq B$ means $A-B$ is Positive Definite)
+
+\underline{Example}: $X_i \iiddist Pois(\theta), i = 1, ..., n$
+
+a) Consider $\tau(\theta) = \theta$. 
+
+$$
+\begin{aligned}
+\psi(x;\theta) 
+&= \frac{\partial}{\partial \theta}ln[e^{-n\theta}\frac{\theta^{\sum x_i}}{\prod x_i !}] \\
+&= \frac{\partial}{\partial \theta}[-n\theta + ln(\theta)\sum x_i - \sum ln(x_i !)] \\
+&= -n + \frac{\sum x_i}{\theta} \\
+&= \frac{n}{\theta}(\bar{x} - \theta) \\
+&\implies \frac{\theta}{n} \psi(x;\theta) \\
+&= \bar{x} - \theta \implies \bar{x} \text{ is the MVUE of } \theta.
+\end{aligned}
+$$
+
+To find $Var_{\theta}(\bar(x))$, we know that $Var_{\theta}(\bar(x)) = \frac{\theta}{n}$. We can also use the CRLB since it's an equality: $\tau'(\theta) = 1, I_n(\theta) = nI_1(\theta) = n(-\EX_{\theta}[\frac{\partial}{\partial \theta} ln(f(x_1|\theta))]) = -n\EX_{\theta}[\frac{\partial}{\partial \theta}(-1 + \frac{x_1}{\theta})] = n\EX_{\theta}[\frac{x_1}{\theta^2}] = \frac{n\theta}{\theta^2} = \frac{n}{\theta} \implies CRLB = \frac{1}{n/\theta} = \frac{\theta}{n}$
+
+
+b) Consider $\tau(\theta) = \theta^2$
 
 \end{document}
