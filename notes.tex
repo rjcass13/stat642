@@ -489,4 +489,201 @@ To find $Var_{\theta}(\bar(x))$, we know that $Var_{\theta}(\bar(x)) = \frac{\th
 
 b) Consider $\tau(\theta) = \theta^2$
 
+Done in class on paper: 
+$\bar{x}^2$ is a biased estimator: $\EX[\bar{x}^2] = Var(\bar{x}) + \EX[\bar{x}]^2 = Var(\bar{x}) + \theta^2$. The bias is $Var(\bar{x}) = \theta/n$
+
+
+
+
+
+\underline{Example}: $X_i \iiddist N(\mu, \sigma^2), \theta = (\mu, \sigma^2)$
+
+$$
+I_n(\theta) = \begin{bmatrix}
+n/\sigma^2 & 0 \\
+0 & n/(2\sigma^4)
+\end{bmatrix} 
+$$
+
+$\tau(\theta) = \mu, \tau'(\theta) = \left( \begin{smallmatrix} 1\\ 0 \end{smallmatrix} \right)$
+
+If $W$ is unbiased for $\mu$, $Var_{\theta}(W) \ge [\tau'(\theta)]^{\top}I_n^{-1}(\theta)\tau'(\theta) = \left( \begin{smallmatrix} 1 & 0 \end{smallmatrix} \right) \left( \begin{smallmatrix} \sigma^2/n & 0 \\ 0 & 2\sigma^4/n \end{smallmatrix} \right) \left( \begin{smallmatrix} 1 \\ 0 \end{smallmatrix} \right) = \sigma^2/n \implies \bar{x}$ is MVUE.
+
+
+$\tau(\theta) = \sigma^2 \implies \tau'(\theta) = \left( \begin{smallmatrix} 1 \\ 0 \end{smallmatrix} \right)$
+
+If $W$ is unbiased for $\sigma^2$: $Var_{\theta}(W) \ge 2\sigma^2/n$
+
+$Var_{\theta}(s^2) = 2\sigma^4/(n-1) > 2\sigma^4/n$
+
+
+\underline{Example}: (CR Condition Fails)
+
+$X_i \iiddist Unif(0, \theta) (\text{ implicitly assuming } \tau(theta) = \theta)$
+
+$\psi(x;\theta) = \frac{\partial}{\partial\theta}ln[f(x|\theta)] = \frac{\partial}{\partial\theta}ln[\theta^{-n}I(0 < X_{(n)} \le \theta)]$
+
+We can still compute $\EX_{\theta}[\psi^2(x;\theta)] = \EX_{\theta}[(\frac{\partial}{\partial\theta}(-n ln(\theta)))^2] = \frac{n^2}{\theta^2} \implies \text{The CRLB would be: } \frac{1}{n^2/\theta^2} = \frac{\theta^2}{n^2}$
+
+$W(x) = \frac{n+1}{n}X_{(n)}$ is unbiased for $\theta$. However, $Var_{\theta}(W) = \frac{\theta^2}{n(n+2)} < \frac{\theta^2}{n^2}$. This is possible because the CR Condition didn't hold in the first place, so the CRLB wasn't actually a valid representation of the lower bound. 
+
+
+\section{Constructing MVUEs using Completeness and Sufficiency}
+
+Let $W$ be an unbiased estimator of $\tau(\theta)$ and $T$ be any statistic. Consider $\EX_{\theta}[W|T]$ as a new random variable.
+
+$\EX_{\theta}[\EX_{\theta}(W|T)] = \EX_{\theta}[W]$
+
+If I condition in a way that I still get a statistic, it remains an unbaised estimator.
+
+$Var_{\theta}(W) = Var_{\theta}(\EX_{\theta}[W|T]) + \EX_{\theta}[Var_{\theta}(W|T)] \ge Var_{\theta}(\EX_{\theta}[W|T])$
+
+Questions moving forward:
+\begin{enumerate}
+    \item How can we choose $T$ so that $\EX_{\theta}[W|T]$ doesn't depend on $\theta$? (sufficiency)
+    \item How can we choose $T$ to maximally reduce the variance? (completeness)
+\end{enumerate}
+
+
+
+\subsection{Sufficiency}
+
+Because $W$ is a statistic, if $x|T$ does not depend on $\theta$, then neither will $W$. 
+
+\underline{Definition}: A statistic $T$ is sufficient if the distribution of $X|T$ does not depend on $\theta$.
+
+Interpretation: If $T$ is sufficient, then two data points $x, y$ should lead to the same inference if $T(x) = T(y)$.
+
+Obvious Sufficient Statistics include: 
+\begin{itemize}
+    \item $x = (x_1, ..., x_n)$
+    \item $(x_{(1)}, ..., x_{(n)})$
+\end{itemize}
+
+\underline{Fact}: If I know $T(x)$ I can generate a new dataset $Y$ with the exact same distributionas $X$ and $T(x) = T(y)$.
+
+\underline{Example}: $x_1, ..., x_n \sim Bern(\theta)$. Then $\sum x_i$ is sufficient.
+
+Generate $Y$ using $\sum x_i$ such that $Y_i \iiddist Bern(\theta)$
+
+$P(Y = y|\sum x_i = t) = \begin{cases} 0 & \sum y_i \neq t \\ \frac{1}{\binom{n}{t}} & \sum y_i = t \end{cases}$
+
+$P_{\theta}(Y = y) = \sum_{t=0}^n \frac{1}{\binom{n}{t}} I(\sum y_i =t)P_{\theta}(\sum x_i = t) = \sum_{t=0}^n I(\sum y_i =t) \binom{n}{t} \theta^t (1-\theta)^{n-t} = \theta^{\sum y_i} (1-\theta)^{n - \sum y_i}$
+
+
+\section{Feb 10}
+
+Sufficiency: If we take an unbiased estimator, and condition it with a sufficient statistic, it will stay an unbiased estimator that does not depend on $\theta$. 
+
+
+If $T$ is sufficient (discrete case), $P_{\theta}(X=x|T(X) = t) = \frac{P_{\theta}(X=x \text{ and } T(X)=t)}{P_{\theta}(T(x)=t)} = \frac{P_{\theta}(X=x)I(t=T(x))}{P_{\theta}(T(X)=T(x))} = \begin{cases} 0 & t \neq T(x) \\ \frac{p(x|\theta)}{q(T(x)|\theta)} & t = T(x) \end{cases}$
+
+
+
+\underline{Theorem}: Factorization
+
+A statistic $T(X)$ is sufficient iff there are functions $h(X)$ and $g(t, \theta)$ such that $f(X|\theta) = h(x)g(T(x), \theta)$.
+
+\underline{Proof} (Discrete): 
+
+If $T$ is sufficient, take $g(t, \theta) = q(t|\theta), h(x) = \frac{p(x|\theta)}{q(T(x)|\theta)}$. That yields the same as above.
+
+Now, assume the factorization holds: $q(t|\theta) = P_{\theta}(T(X) = t) = \sum_{y:T(y)=t}p(y|\theta) = \sum_{y:T(y)=t}h(y)g(T(y), \theta) = [\sum_{y:T(y)=t}h(y)]g(t, \theta)$.
+
+Now, $\frac{p(x|\theta)}{q(T(x)|\theta)} = \frac{h(x)g(T(x), \theta)}{[\sum_{y:T(y)=T(x)}h(y)]g(T(x), \theta)} = \frac{h(x)}{\sum_{y:T(y)=T(x)}h(y)}$ which does not involve $\theta$.
+
+\underline{Example}:
+
+$X_i \iiddist N(\theta, 1)$
+
+$f(x|\theta) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}(x_i - \theta)^2} = (2\pi)^{-n/2}exp(-1/2\sum_{i=1}^n(x_i - \theta)^2)$
+
+Example factorizations
+
+1. 
+$(2\pi)^(-n/2): h(x)$ or could be absorbed into $g$ (doesn't really matter)
+
+$g(T(x), \theta)$ is the exponential: $T(x) = (x_1, ..., x_n)$
+
+2. $(2\pi)^{-n/2}exp(-1/2\sum_{i=1}^n(x_{(i)} - \theta)^2)$
+
+$T(x) = (x_{(1)}, ..., x_{(n)})$
+
+3. $(2\pi)^{-n/2}exp(-1/2 \sum x_i^2)exp(n \bar{x}\theta - \frac{n\theta^2}{2})$
+
+$\implies T(X) = \sum x_i$ or $T(X) = \bar{x}$ are sufficient
+
+\underline{Example}: $X_i \iiddist N(\mu, \sigma^2), \theta = (\mu, \sigma^2)$
+
+$f(x|\theta) = (2\pi\sigma^2)^{-n/2}exp(-\frac{1}{2\sigma^2}\sum(x_i-\mu)^2) = (2\pi)^{-n/2}\sigma^{-n}exp(-\frac{1}{2\sigma^2}\sum(x_i^2) + \frac{\mu}{\sigma^2}\sum x_i - \frac{n\mu^2}{2\sigma^2})$
+
+$T(x) = (\sum x_i, \sum x_i^2)$ is sufficient.
+
+\underline{Note}: Any 1:1 transformation of a sufficient statistic is sufficient!
+
+Set $t_1 = \sum x_i, t_2 = \sum x_i^2$: $\bar{x} = \frac{t_1}{n}, s^2 = \frac{1}{n-1}\sum(x_i - \bar{x})^2 = \frac{1}{n-1}(\sum x_i^2 - n\bar{x}^2) = \frac{1}{n-1}(t_2 - \frac{t_1^2}{n}) \implies (\bar{x}, s^2)$ is also sufficient.
+
+\underline{Example}: $X_i \iiddist Unif(\theta, \theta + 1)$
+
+$f(x|\theta) = \prod_{i=1}^n I(x_i > \theta)I(x_i < \theta + 1) = I(X_{(1)} > \theta)I(X_{(n)} < \theta) \implies T(X) = (X_{(1)}, X_(n))$ is sufficient.
+
+\underline{Example} (Exponential Families)
+
+$f(x|\theta) = (\prod h(x_i))exp[\sum_{i=1}^n \sum_{j=1}^k w_i(\theta)t_j(x_i) + n ln(c(\theta))] = \tilde{h}(x)exp[\sum_{j=1}^k w_j(\theta)T_j(x) + n ln(c(\theta))]$
+
+$\implies (T_1(x), ..., T_k(x))$ is a sufficient statistic.
+
+
+\section{Feb 12}
+
+\underline{Definition}: A sufficient statistic is is said to be minimal sufficient if it is a function of any other sufficient statistic.
+
+Note: a function $g(x)$ is a function of $f(x)$ iff $f(x) = f(y) \implies g(x) = g(y)$
+
+Let $T(X)$ be any sufficient statistic. Then by the factorization theorem, $f(x|\theta) = h(x)g(T(x), \theta)$. Therefore, when $T(x) = T(y), \frac{f(x|\theta)}{f(y|\theta)} = \frac{h(x)g(T(x), \theta)}{h(y)g(T(y), \theta)} = \frac{h(x)}{h(y)}$: doesn't depend on $\theta$. When minimally sufficient, this implies the ratio will not have a dependence on $\theta$. We also want this to go the other way.
+
+\underline{Theorem}: A sufficient statistic is minimal sufficient if $\frac{f(x|\theta)}{f(y|\theta)}$ is independent of $\theta$ implies $T(x) = T(y)$.
+
+\underline{Proof}: Define $T^*$ to be any sufficient statistic, and $T$ satisfies the above theorem condition. If $T^*(x) = T^*(y)$ then by factorization theorem, $\frac{f(x|\theta)}{f(y|\theta)} = \frac{h^*(x)g^*(T^*(x), \theta)}{h^*(y)g^*(T^*(y), \theta)} = \frac{h^*(x)}{h^*(y)}$ which doesn't depend on $\theta$.
+
+By the above theorem, $T(x) = T(y)$, so $T(x)$ is minimal sufficient.
+
+
+\underline{Example}: $X_i \iiddist N(\mu, \sigma^2)$
+
+1) $\sigma^2$ known: $f(x|\mu) = (2\pi \sigma^2)^{-n/2} exp(-\frac{1}{2\sigma^2}\sum (x_i - \mu)^2) = (2\pi \sigma^2)^{n/2}exp(1\frac{1}{2\sigma^2}+\frac{n\mu\bar{x}}{\sigma^2} - \frac{n\mu^2}{2\sigma^2})$
+
+$\frac{f(x|\mu)}{f(y|\mu)} = exp(-\frac{1}{\sigma^2}[\sum x_i^2 - \sum y_i^2])exp(\frac{n\mu}{\sigma^2}(\bar{x} - \bar{y}))$. The only way to have independence from $\mu$ is if $\bar{x} = \bar{y}$, so $T(x) = \bar(x)$ is minimal sufficient.
+
+\underline{Example}: $X_i \iiddist Unif(0, 1)$
+
+$f(x|\theta) = I(\theta < x_{(1)})I(\theta+1 > x_{(n)})$
+
+$\frac{f(x|\theta)}{f(y|\theta)} = \frac{I(\theta < x_{(1)})I(\theta+1 > x_{(n)})}{I(\theta < y_{(1)})I(\theta+1 > y_{(n)})}$. For this to be independent of $\theta$, the corresponding indicators must 'change' at the same values, meaning $x_{(1)} = y_{(1)}$ and $x_{(n)} = y_{(n)}$. Therefore, $T = (x_{(1)}, x_{(n)})$ is minimal sufficient.
+
+In this family, $T'(x) = (\frac{x_{(n)}- 1 + x_{(1)}}{2}, x_{(n)} - x_{(1)})$ is minimal sufficient. Notice $X_{(n)} - X_{(1)} = (X_{(n)} - \theta) - (X_{(1)} - \theta) \overset{D}{=} z_{(n)} - z_{(1)}, Z_i \iiddist Unif(0, 1)$ meaning that part of the minimal statistic does not depend on $\theta$: but the minimal statistic is supposed to be the minimal information to describe $\theta$: uh oh
+
+\underline{Definition}: A statistic S is ancillary to $\theta$ if its distribution does not depend on $\theta$.
+
+\underline{Finding Ancillary Statistics}:
+
+1. Location Families: $f(x|\theta) = g(x-\theta)$. $X_i - \theta \overset{D}{=} Z \sim g \implies X_i - X_j$ is ancillary. Or $X_{(i)} - X_{(j)}$, etc. Spacing between the data is anciallry in a location family
+
+2. Scale Families: $f(x|\theta) = \frac{1}{\theta}g(x/\theta), \theta > 0$. $\frac{X_i}{\theta} \overset{D}{=} Z \sim g \implies, \frac{X_i}{X_j}, \frac{X_{(i)}}{X_{(j)}}$.
+
+\section{Completeness}
+
+Want statistics that are "completely about $\theta$"
+
+\underline{Definition}: A statistic $T$ is complete for $\theta$ if, for a transformation $g(T), \EX_{\theta}[g(T)] = 0 \implies g(T) = 0$ with probability 1. 
+
+\underline{Example}: $X_i \iiddist f(x_i|\theta)$
+
+$T(X) = X$ is not complete. Let $g(T) = x_1 - x_2$. Then $P(g(T) \neq 0) > 0$, but $\EX_{\theta}[g(T)] = \EX_{\theta}[x_1] - \EX_{\theta}[x_2] = 0$.
+
+\underline{Example}: $X_i \iiddist Unif(\theta, \theta + 1)$
+
+$T = (x_({1}), x_{(n)})$ is not complete. Let $g(T) = x_{(n)} - x_{(1)} - \EX[X_{(n)} - x_{(1)}]$. Since $P(g(T) \neq 0) > 0, \EX_{\theta}(g(T)) = 0$, $T$ is not complete.
+
+
 \end{document}
