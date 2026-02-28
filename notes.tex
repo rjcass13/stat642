@@ -7,6 +7,8 @@
 \setlength{\parindent}{0pt}
 \newcommand{\statvec}[1]{\underset{\sim}{\bm{#1}}} % Vector symbol (tilde under vector)
 \DeclareMathOperator{\EX}{\mathbb{E}} % Expected Value symbol
+\DeclareMathOperator{\ext}{\EX_{\theta}} % Expected Value symbol
+\DeclareMathOperator{\vart}{Var_{\theta}} % Expected Value symbol
 \newcommand{\indep}{\perp\!\!\!\!\perp} % Independence symbol
 \newcommand{\real}{\mathbb{R}} % Simplified 'Reals' indicator
 \newcommand{\pto}{\overset{P}{\to}}
@@ -30,6 +32,7 @@
 \newcommand{\iiddist}{\overset{\mathrm{iid}}{\sim}}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\boldred}[1]{\textbf{\textcolor{red}{#1}}}
+
 
 
 \begin{document}
@@ -683,7 +686,263 @@ $T(X) = X$ is not complete. Let $g(T) = x_1 - x_2$. Then $P(g(T) \neq 0) > 0$, b
 
 \underline{Example}: $X_i \iiddist Unif(\theta, \theta + 1)$
 
-$T = (x_({1}), x_{(n)})$ is not complete. Let $g(T) = x_{(n)} - x_{(1)} - \EX[X_{(n)} - x_{(1)}]$. Since $P(g(T) \neq 0) > 0, \EX_{\theta}(g(T)) = 0$, $T$ is not complete.
+$T = (x_{(1)}, x_{(n)})$ is not complete. Let $g(T) = x_{(n)} - x_{(1)} - \EX[X_{(n)} - x_{(1)}]$. Since $P(g(T) \neq 0) > 0, \EX_{\theta}(g(T)) = 0$, $T$ is not complete.
+
+\underline{Feb 19}
+
+\underline{Example}: $X_i \iiddist Unif(0, \theta), \theta > 0$
+
+$T = X_{(n)}$ is minimal sufficient. Is it complete?
+
+To show completeness, assume there exists a function $g(t)$ such that $\EX_{\theta}[g(T)] = 0 \forall \theta > 0$. We then need to show that this only happens when $g(t) = 0$.
+
+Assume $g(t)$ is continuous. Assume $0 = \EX_{\theta}[g(T)] = \int_{0}^{\theta}g(t)X_{(n)}dt = \int_{0}^{\theta}g(t)n\frac{t^{n-1}}{\theta^n}dt$
+
+Derivative of both sides:
+
+$0 = n\frac{d}{d\theta}\theta^{-n}\int_0^{\theta}g(t)t^{n-1}dt = n\left[-n\theta^{-n+1}\int_0^{\theta}g(t)t^{n-1}dt + \theta^{-n}g(\theta)\theta^{n-1}\right] = -n^2 \theta^{-1} \int_0^{\theta}g(t)\frac{t^{n-1}}{\theta^n}dt + \frac{n g(\theta)}{\theta} = \frac{n g(\theta)}{\theta}$
+
+$\implies 0 = \frac{n g(\theta)}{\theta} \implies 0 = g(\theta) \forall \theta > 0$, so $T=X_{(n)}$ is complete. 
+
+\underline{Example}: $X_i \iiddist Bern(\theta), 0<\theta<1$
+
+$T = \sum X_i$ is sufficient (+ minimal).
+
+Assume $g(t)$ satisfies $\EX_{\theta}[g(T)] = 0$
+
+$0 = \EX_{\theta}[g(T)] = \sum_{i=1}^n g(t)\binom{n}{t}\theta^t(1-\theta)^{n-t} = (1-\theta)^n \sum_{i=1}^n g(t)\binom{n}{t}\left(\frac{\theta}{1-\theta}\right)^t$ $\forall 0<\theta<1$
+
+This is a polynomial of degree n in $r = \frac{\theta}{1-\theta} \in (0, \infty)$
+
+$\implies$ the polynomial must be 0, meaning all of its coefficients must be 0.
+
+$\implies g(t)\binom{n}{t} = 0 \implies g(t) = 0, t=0, ..., n$
+
+$\implies T$ is complete. 
+
+\underline{Theorem}:
+
+Assume $X_i \iiddist f(x|\theta)$ where $f(x|\theta)$ is an exponential family:
+
+$F(x|\theta) = h(x) exp\{\sum_{j=1}^k w_j(\theta)t_j(x) + ln(c(\theta)) \}$
+
+The sufficient statistic $T = (\sum_{i=1}^n t_1(x_i), ..., \sum_{i=1}^n t_k(x_i))$ is also complete iff the parameter space $\Theta \subset \real^k$ contains an open set.
+
+Interval $(0, 1)$ is open. All intergers is not open. Open: can you 'draw' an infitessmally small 'circle' around some point in your set and still only contain things in your set?
+
+\underline{Example}: $X_i \iiddist N(\theta_1, \theta_2), T = (\bar{X}, S^2)$
+
+i) $\Theta = \real x (0, \infty)$ is open. Then $T$ is complete
+
+ii) $\Theta = \real x \{1, 2\}$ is not open. The second set is not open, so $T$ is not complete.
+
+iii) $\Theta = \{(\theta_1, \theta_2): \theta_2 = \theta_1^2 + 1 \}$ which is not an open set, so $T$ is not complete.
+
+For (ii) and (iii), try drawing out the support and see if you can draw a circle around any point and still be in the set. 
+
+\underline{Facts}: Facts about complete statistics:
+
+1) If a minimal sufficient statistic exists, then any complete sufficient statistic is also minimal sufficient
+
+2) Any complete sufficient statistic is independent of any ancillary statistic
+
+\underline{Example}: $X_i \iiddist N(\theta, 1), \theta \in \real$
+
+Then $T = \bar{X}$ is complete and sufficient.
+
+Since $S^2 = \frac{1}{n-1}\sum (X_i - \bar{X})^2 = \frac{1}{n-1} \sum [(x_i - \theta) - (\bar{x} - \theta)]^2 \overset{D}{=} \frac{1}{n-1} \sum (z_i - \bar{z})^2, z_i \iiddist N(0, 1)$
+
+$\implies S^2$ is anciallary, $\implies \bar{X} \indep S^2$
+
+If instead $Y_i \iiddist N(\theta, \sigma^2), \sigma^2 > 0$ now not known.
+
+What about $(\bar{Y}, S_Y^2)$
+
+$X_i overset{D}{=} Z_i + \theta \implies \bar{X} \overset{D}{=} \bar{Z} + \theta$
+
+$Y_i \overset{D}{=} \sigma Z_i + \theta \implies \bar{Y} \overset{D}{=} \sigma \bar{Z} + \theta \implies \bar{Y} \overset{D}{=} \sigma(\bar{X} - \theta) + \theta$
+
+$S^2 \overset{D}{=} S_Z^2$
+
+$S_Y^2 \overset{D}{=} \sigma^2 S_Z^2 \implies (\bar{Y}, S_Y^2) \overset{D}{=} (\sigma(\bar{X} - \theta) + \theta, \sigma^2 S^2) \implies$ these are independent. 
+
+
+\section{Returning to MVUEs}
+
+Assume $W$ is an unbiased estimator for $\tau(\theta)$ and that $T$ is an sufficient statistic. 
+
+
+\underline{Theorem}: Rao-Blackwell
+
+The statistic $\phi(T) = \EX[W|T]$ is unbiased for $\tau(\theta)$ and $Var_{\theta}(\phi(T)) \le Var_{\theta}(W)$
+
+\underline{Proof}:
+
+i) $\phi(T)$ is a statistic because T is sufficient
+
+ii) $\phi(T)$ is unbiased because $\EX_{\theta}[\phi(T)] = \EX_{\theta}[\EX(W|T)] = \EX_{\theta}[W] = \tau(\theta)$
+
+iii) $Var_{\theta}(W) = Var_{\theta}(\phi(T)) + \EX_{\theta}[Var_{\theta}(W|T)] \ge Var_{\theta}(\phi(T))$
+
+\underline{Theorem}:
+
+If an MVUE exists, then it is unique
+
+\underline{Proof}: 
+
+Let $W_1, W_2$ be MVUEs. Define $W_3 = \frac{1}{2}(W_1 + W_2)$ (unbiased), $Var_{\theta}(W_3) = \frac{1}{4}[Var_{\theta}(W_1) + Var_{\theta}(W_2) + 2 Cov_{\theta}(W_1, W_2)] = \frac{1}{2}[Var_{\theta}(W_1) + 2 Cov_{\theta}(W_1, W_2)] \le Var_{\theta}(W_1)$
+
+Must have equality on the last step (otherwise $W_1, W_2$ would not be MVUEs), implying $W_1 = W_2$.
+
+\underline{Theorem}: 
+
+An unbiased estimator $W$ is the MVUE iff it is uncorrelated with any $U$ satistfying $\EX_{\theta}[U] = 0, \forall \theta$ (unbiased estimators of 0).
+
+
+\section{Feb 24}
+
+\underline{Theorem}:
+
+If $W$ is unbiased for $\tau(\theta)$, then $W$ is the MVUE iff it is uncorrelated with any unbiased estimator of 0. 
+
+\underline{Proof}:
+
+Assume $W$ is uncorrelated with any $U$ satisfying $\ext[U] = 0$. Then if $W'$ is any unbiased estimator of $\tau(\theta)$, then $U = W - W'$ is unbiased for 0. $Var_{\theta}(W') = Var_{\theta}(W - U) = \vart(W) + \vart(U) - 2 Cov_{\theta}(W, U) = \vart(W) + \vart(U) \ge \vart(W)$ 
+
+Hint for HW: Assume the $Cov_{\theta}(W, U) \neq 0$ for some unbiased $U$ for 0. Then consider $W' = W + aU$. Then use contrapositive to show we can find something with lower variance. 
+
+\underline{Theorem}: (Lehman-Scheffe)
+
+Suppose W is a function of a complete sufficient statistic. Then it is the MVUE of $\tau(\theta) = \ext(W)$.
+
+\underline{Proof}:
+
+Let $U$ be unbiased for 0. $Cov_{\theta}(W, U) = \ext(WU) = \ext[\ext[WU|T]] = \ext[W \ext[U|T]]$. Because T is sufficient, $g(T) = \ext(U|T)$ doe snot depend on $\theta$. However, $\ext[g(T)] = \ext[U] = 0$. By completeness, $P(g(T) = 0) = 1$.
+
+$\implies Cov_{\theta}(W, U) = \ext[W (0)] = 0$
+
+
+\underline{Example}: $X_i \iiddist Pois(\theta), \tau(\theta) = \theta^2, \theta > 0$
+
+We showed previously that $W = \bar{X}^2 - \frac{\bar{X}}{n}$ is unbiased for $\theta^2$.
+
+Why is it the MVUE? Because $\bar{X}$ is complete (exponential family, open set) and sufficient (factorization theorem). 
+
+
+\underline{Example}: $X_i \iiddist N(\theta, 1), \theta \in \real$. Find MVUE for $\tau(\theta) = \theta^2$. 
+
+$\bar{X}$ was the MVUE for $\tau(\theta) = \theta$, so we'll start with a guess of $W = \bar{x}^2$. $\ext[W] = \vart(\bar{x}) + \ext[\bar{x}]^2 = \frac{1}{n} + \theta^2$. So the bias is $\frac{1}{n}$. 
+
+So, $W = \bar{x}^2 - \frac{1}{n}$ is the MVUE.
+
+Remember, for any distribution, $\ext[\bar{x}] = \theta$ (population mean) and $\vart(\bar{x}) = \frac{\sigma^2}{n}$.
+
+\underline{Example}: $X_i \iiddist Exp(\theta), \theta > 0$. $P(X_1 \le 1) = \tau(\theta) = 1-e^{-\frac{1}{\theta}}$.
+
+1. What is the complete sufficient statistic?
+
+$\theta^{-n}e^{-\frac{\sum X_i}{\theta}} \implies \sum X_i$ is CSS (Complete Sufficient Statistic). 
+
+2. Start with any unbiased estimator
+
+$W = I(X_1 \le 1)$ is unbiased, so $W^* = \EX[W|T]$ is the MVUE.
+
+$\frac{X_1}{\sum X_i} \sim Beta(1, n-1)$ is independent of $T$
+
+$\EX[I(X_1 \le 1)|T] = P(\frac{X_1}{T} \le \frac{1}{T} | T) = \begin{cases} 1 & T < 1 \\ 1-(1-\frac{1}{T})^{n-1} & T \ge 1 \end{cases}$
+
+
+Summary:
+
+Can use Cramer-Rao lower bound to find MVUE if you're able to factor the Score. Otherwise, dont get a whole lot.
+
+Exponential Family: Sufficiency is automatic, completeness depends on support
+
+Suffifiency: Factorization Theorem. Simplify correctly, end with Minimal Sufficient
+
+Lehman-Scheffe: If something is Complete and Suffificient, it is the MVUE
+
+
+\section{Asymptotic Evaluation of Estimators}
+
+Looking at 'as n goes to infinity', or large sample theory.
+
+\underline{Definition}: Let $W_n$ be an estimator based on sample of size n of $\tau(\theta)$. $W_n$ is said to be consistent for $\tau(\theta)$ if $W_n \overset{P_{\theta}}{\to} \tau(\theta) \forall \theta$
+
+$P_{\theta}(|W_n - \tau(\theta)| > \epsilon) \underset{n \to \infty}{\to} 0$ for all $\theta$ and any $\epsilon > 0$. 
+
+
+\section{Feb 26}
+
+Methods for showing consistency: 
+
+1. Tail/Concentration Bounds to control the probabilities
+
+Markov's Inequality, Chebychev, Chernoff
+
+2. If $W_n = g(\bar{x})$, we can apply LLN ($\bar{x} \pto \mu$) then CMT (Continous Mapping Theorem) ($G(\bar{x} \pto g(\mu)$)) if g is continous.
+
+3. M-estimation (Maiximizer/Minimizer of some function, ie. MLE)
+
+$\frac{1}{n}l(\theta|x) \overset{P_{\theta_0}}{\to} E_{\theta_0}[ln(f(x_1|\theta))]$
+
+Basically, we know the right side is min/max at $\theta_0$, so we need to show that the left side approcahes that same min/max as the overeall distirbutions converge
+
+\underline{Example}: 
+
+Suppose $W_n$ satisfies: 
+
+1) $\ext[W_n] \underset{n\to\infty}{\to} \tau(\theta)$ ($W_n$ is asymptocially unbiased for $\tau(\theta)$) 
+
+2) $Var_{\theta} \underset{n\to\infty}{\to} 0$
+
+In this case, $W_n$ is consistent: 
+
+$P_{\theta}(|W_n - \tau(\theta)| > \epsilon) \le \frac{\ext[(W_n - \tau(\theta))^2]}{\epsilon^2} \text{ Chebychev's! }= \frac{MSE_{\tau(\theta)}(W_n)}{\epsilon^2} \to 0$ by (1) and (2).
+
+\underline{Example}: $X \iiddist Beta(\alpha, 1)$
+
+1) Method of Moments: $\bar{x} = \frac{\alpha}{\alpha + 1} \leftrightarrow \hat{\alpha} = \frac{\bar{x}}{1 - \bar{x}}$
+
+$\bar{X} \pto \frac{\alpha}{\alpha + 1}$ as $n \to \infty$
+
+Define $g(x) = \frac{x}{1-x}$, continious on (0, 1). By CMT: $g(\bar{x}) \pto g(\frac{\alpha}{\alpha + 1}) = \frac{\frac{\alpha}{\alpha + 1}}{1 - \frac{\alpha}{\alpha + 1}} = \alpha$
+
+Thus, MoM estimator converges to $\alpha$ so it is consistent.
+
+2) The MLE is $\hat{\alpha} = \frac{n}{-\sum ln(x_i)} = \frac{-1}{\bar{Y}}, \bar{Y} = \frac{-1}{n}\sum ln(x_i)$
+
+$\bar{Y} \pto \EX_{\alpha}[-ln(x_i)], -ln(x_i) \sim Exp(\frac{a}{\alpha}) \implies \bar{Y} \pto \frac{1}{\alpha}$
+
+$g(x) = \frac{1}{x}$ continous at $\frac{1}{\alpha}$, so $g(\bar{Y}) \pto \alpha$
+
+
+
+
+The CLT says as $\sqrt{n}(\bar{X} - \mu) \dto N(0, \sigma^2)$ 
+
+$P(|\bar{X} - \mu| > \frac{C}{\sqrt{n}}) = P(\sqrt{n}|\bar{X} - \mu| > C) \to 1 - \Phi(\frac{C}{\sigma})$
+
+\underline{Example}: $X \iiddist Unif(0, \theta)$
+
+$\frac{X_{(n)}}{\theta} \sim Beta(n, 1)$, so $P_{\theta}(|X_1 - \theta| > Cn^{-1}) = P_{\theta}(\theta - X_{(n)} < C n^{-1}) = P_{\theta}(\frac{X_{(n)}}{\theta} < 1 - \frac{C}{n\theta}) = (1 - \frac{C}{n})^n \to e^{-C}$
+
+
+\underline{Definition}: If $\lim_{n\to\infty} b_n Var(W_n) \to \gamma^2$, then $\gamma^2$ is called the limiting variance of $W_n$
+
+$Var(W_n) \approx \frac{\gamma^2}{n}$
+
+eg. $Var(\bar{X}) = \frac{\sigma^2}{n} \implies b_n = n, b_n Var(\bar{X}) = \sigma^2 \to \sigma^2$
+
+\underline{Example}: $X \iiddist N(\mu, \sigma^2)$
+
+$Var(\frac{1}{\bar{X}}) = \infty$
+
+\underline{Definition}: Suppose $\sqrt{n}(W_n - \tau(\theta)) \dto Y, E(Y) = 0,$ and $Var(Y) < \infty$. Then, $\sigma^2 = Var(Y)$ is the asymptotic variance of $W_n$
+
+
+
+
 
 
 \end{document}
