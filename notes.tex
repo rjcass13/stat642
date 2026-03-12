@@ -32,6 +32,7 @@
 \newcommand{\iiddist}{\overset{\mathrm{iid}}{\sim}}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\boldred}[1]{\textbf{\textcolor{red}{#1}}}
+\usepackage[linktoc=all]{hyperref}
 
 
 
@@ -941,8 +942,250 @@ $Var(\frac{1}{\bar{X}}) = \infty$
 \underline{Definition}: Suppose $\sqrt{n}(W_n - \tau(\theta)) \dto Y, E(Y) = 0,$ and $Var(Y) < \infty$. Then, $\sigma^2 = Var(Y)$ is the asymptotic variance of $W_n$
 
 
+\section{Mar 3}
+
+\underline{Definition} (same as end of last class, but restated) If $\sqrt{n}(W_n - \tau(\theta)) \dto Y_{\theta}, \forall \theta$, where $\ext[Y_{\theta}] = 0$, then $\vart(Y_{\theta})$ is called the asymptotic variance of $W_n$.
+
+$\vart(W_n) = \frac{1}{n}\vart(\sqrt{n}(W_n - \tau(\theta))) \approx \frac{\vart(Y_{\theta})}{n}$
+
+\underline{Example}: $X \iiddist Pois(\lambda), \lambda > 0$
+
+The MLE of $\tau(\lambda) = \lambda^2$ is $\bar{X}^2$, while the MVUE is $\bar{X}^2 - \frac{\bar{X}}{n}$
+
+Notice: $\bar{X}^2 - (\bar{X}^2 - \frac{\bar{X}}{n}) = \frac{\bar{X}}{n} \pto 0$ meaning the MLE and MVUE converge as n increases. Even if you multiply by $\sqrt{n}$ this still converges in probability to 0. 
+
+"1-2" punch for MVUEs: Law of Large numbers, continous mapping theorem
+
+"1-2" punch for Asymptotics: Central Limit Theorem, Delta Method
+
+In this case, CLT: $\sqrt{n}(\bar{X} - \lambda) \dto N(0, \lambda)$ (Note, n cannot appear in the limiting distribution)
+
+Delta Method: $\sqrt{n}(g(\bar{x}) - g(\lambda)) \dto N(0, \lambda[g'(\lambda)]^2), g(x)$ in our case is $x^2$, $g'(x) = 2x$.
+
+$\implies \sqrt{n}(\bar{X}^2 - \lambda^2) \dto N(0, 4\lambda^3)$
+
+Thus the asymptotic variance is $4\lambda^3$, and the asymptotic variance approximation is: $Var_{\lambda}(\bar{X}) \approx \frac{4\lambda^3}{n}$
+
+The CRLB is: $\frac{(2\lambda)^2}{n/\lambda} = \frac{4\lambda^3}{n}$
+
+\underline{Define}: An estimator $W_n$ is said to be:
+
+i) Asymptotically unbiased if $\sqrt{n}(W_n - \tau(\theta)) \dto Y_{\theta}, \ext[Y_{\theta}] = 0$
+
+ii) Asymptotically efficient if its asymptotic varaince is $\frac{[\tau'(\theta)]^2}{I_1(\theta)}$ (the CRLB, Fischer information calculated for 1 sample)
+
+\underline{Theorem}: Under regularity conditions, if $X \iiddist f(x|\theta)$, then:
+
+i) the MLE $(\hat{\theta}_n)$ will exist and be unique with probability converging to 1
+
+ii) $\sqrt{n}(\hat{\theta}_n - \theta_0) \dto N(0, I_1^{-1}(\theta_0))$
+
+\underline{Proof}: 
+
+$l(\theta|x) = \sum_{i=1}^n ln(f(x_i|\theta)) \implies l'(\theta|x) = \psi(X; \theta) = l'(\theta_0|x) + l''(\theta_0|x)(\theta - \theta_0) + R_n(\theta, \theta_0)$
+
+By regularity conditions, $\frac{R_n(\hat{\theta}_n, \theta_0)}{\sqrt{n}} \pto 0$
+
+Plug in $\theta = \hat{\theta}_n$, by MLE: $0 = l'(\theta_0|x) + l''(\theta_0|x)(\hat{\theta}_n - \theta_0) + R_n(\hat{\theta}_n, \theta_0)$
+
+$\implies \sqrt{n}(\hat{\theta}_n - \theta_0) = \frac{\sqrt{n}l'(\theta_0|x)}{-l''(\theta_0|x)} + \frac{\sqrt{n}R_n(\hat{\theta}_n, \theta_0)}{-l''(\theta_0|x)}$
+
+Look at $-l''(\theta_0|x) = -\sum_{i=1}^n \frac{\partial^2}{\partial \theta^2}ln(f(X_i|\theta))|_{\theta = \theta_0} \implies \frac{1}{n}(-l''(\theta_0|x)) \overset{P_{\theta_0}}{\to} \EX_{\theta_0}[-\frac{\partial^2}{\partial \theta^2}ln(f(X_i|\theta))|_{\theta = \theta_0}] = I_1(\theta_0)$
+
+Now examine: $\frac{1}{\sqrt{n}} \sum_{i=}^n l'(\theta_0|x) = \frac{1}{\sqrt{n}}(\sum_{i=1}^n \psi(X_i; \theta_0)) = \sqrt{n}(\frac{1}{n}\sum_{i=1}^n \psi(X_i; \theta_0))$
+
+We know $\EX_{\theta_0}(\psi(X_i; \theta_0)) = 0$, $Var_{\theta_0}(\psi(X_i;, \theta_0)) = I_1(\theta_0)$
+
+Apply CLT to $Y_i = \psi(X_i; \theta_0): \sqrt{n}\bar{Y} = \frac{1}{\sqrt{n}}l'(\theta|x) \dto N(0, I_1(\theta_0))$ 
+
+By Slutsky's theorem (as n inreases, anything that converges to something with mean 0 dissappears): 
+
+$\frac{\sqrt{nl'(\theta_0|x)}}{-l''(\theta_0|x)} = \frac{\frac{1}{\sqrt{n}}l'(\theta_0|x)}{-\frac{1}{n}l''(\theta_0|x)} \dto \frac{N(0, I_1(\theta_0))}{I_1(\theta_0)} = N(0, I_1^{-1}(\theta_0))$
+
+$\frac{\sqrt{n}R_n(\hat{\theta}_n, \theta_0)}{-l''(theta_0|x)} = \frac{\frac{1}{\sqrt{n}}R_n(\hat{\theta}_n, \theta_0)}{-\frac{1}{n}l''(\theta_0|x)} \overset{P_{\theta_0}}{\to} 0$
+
+\section{Mar 10}
+
+\underline{Example}: $X \iiddist Bern(\theta), 0 < \theta < 1$
+
+The MLE is $\bar{X}_n$ as long as $\bar{X} \cancel{\in} \{0, 1\}$
+
+The CLT says $\sqrt{n}(\bar{X}_n-\theta) \dto N(0, \theta(1-\theta))$
+
+The MLE result says that $\sqrt{n}(\bar{X}_n-\theta) \dto N(0, I_1^{-1}(\theta))$
+
+Recall that $I_1(\theta) = -\ext[\frac{\partial^2}{\partial \theta^2} ln(\theta^x(1-\theta)^{1-x})] = -\ext[\frac{\partial^2}{\partial\theta^2}(Xln(\theta) + (1-X)ln(1-\theta))] = \ext[\frac{X}{\theta^2} + \frac{1-X}{(1-\theta)^2}] = \frac{1}{\theta} + \frac{1}{1-\theta} = \frac{1}{\theta(1-\theta)}$
 
 
+What about MLE for $\eta = \tau(\theta) = ln(\frac{\theta}{1-\theta})$
+
+$\tau'(\theta) = \frac{1}{\theta} + \frac{1}{1-\theta} = \frac{1}{\theta(1-\theta)} \implies \sqrt{n}(\hat{\eta} - \eta) \dto N(0, \frac{1}{\theta(1-\theta)})$
+
+\subsection{Relative Efficiency}
+
+Suppose $W_n$ and $V_n$ are both asymptocially unbiased and have asymptotic variances $\sigma^2_W, \sigma^2_V$
+
+\underline{Definition}: The relative asymptotic efficiency  of $V_n$ compared to $W_n$ is $ARE(V_n, W_n) = \frac{\sigma^2_W}{\sigma^2_V}$ (an estimator is better when it's asymptotic variance is smaller, so this says that relative efficiency increases as the target estimator's variance decreases comapred to another's).
+
+\underline{Example}: $X \iiddist Pois(\lambda), \lambda > 0, \tau(\lambda) = P_{\lambda}(X_1 = 0) = e^{-\lambda}$
+
+Get some naive estimates for $\lambda$:
+
+$W_n = \frac{1}{n}\sum_{i=1}^n I_{(X_J = 0)}, V_n = e^{-\bar{X}}$
+
+Now find the asymptotic variances:
+
+We know that $\sqrt{n}(W_n - e^{-\lambda}) \dto N(0, e^{-\lambda}(1-e^{-\lambda}))$. Also, $\sqrt{n}(V_n - e^{-\lambda}) \dto N(0, e^{-\lambda}I_1(\theta)) = N(0, \lambda e^{-2\lambda})$
+
+$\implies ARE(V_n, W_n) = \frac{e^{-\lambda}(1-e^{-\lambda})}{\lambda e^{-2\lambda}} = \frac{e^{\lambda}(1-e^{-\lambda})}{\lambda} = \frac{e^{\lambda} - 1}{\lambda} > 1$
+
+\underline{Example}: Mean vs. Median: $X \iiddist f$, f is symmetric about some point $\theta$, and $\EX[X_i] = \theta$
+
+$\sqrt{n}(\bar{X} - \theta) \dto N(0, \sigma^2), \sigma^2 = Var(x_i)$
+
+$\sqrt{n}(\tilde{X} - \theta) \dto N(0, \frac{1}{2f(\theta)^2})$
+
+$ARE(\tilde(X), \bar{X}) = 4\sigma^2f^2(\theta)$
+
+i) Normal: $ARE(\tilde{X}, \bar{X}) = 4\sigma^2(2\pi \sigma^2)^{-1} = \frac{2}{\pi} \approx 0.64$
+
+ii) Laplace: $f(x|\beta, \theta) = \frac{1}{2\beta}e^{\frac{-|x-\theta|}{\beta}}: ARE(\tilde{X}, \bar{X}) = 4(2\beta^2)(\frac{1}{2\beta})^2 = 2$ (smaller tails, median is more efficient)
+
+\subsection{Hypothesis Testing}
+
+$X_1, ..., X_n \sim f(X|\theta)$
+
+\underline{Definition}: Let $\theta \in \Theta$. A null hypothesis is a statement $H_0: \theta \in \Theta_0 \subset \Theta$. The corresponding alternative hyposthesis is: $H_1: \theta \in \Theta_1 = \Theta \setminus \Theta_0$
+
+\underline{Example}: $X \iiddist N(\mu, \sigma^2)$
+
+i) $\sigma^2$ known, $\theta = \mu, \Theta = \{0, 1\}$
+
+$H_0: \mu = 0 : [\theta \in \Theta_0 = \{0\}]$
+
+$H_1: \mu = 1 : [\theta \in \Theta_1 = \{1\}]$
+
+ii) $\sigma^2$ known, $\theta = \mu$
+
+$H_0: \theta \in \Theta_0 = [0, \infty)$
+
+$H_1: \theta \in \Theta_1 = (-\infty, 0)$
+
+iii) $\sigma^2$ unknown: $\theta = (\mu, \sigma^2)$
+
+$H_0: \mu = 0 : [\theta \in \Theta_0 = \{0\} \times (0, \infty)]$
+
+$H_1: \mu \neq 0 : [\theta \in \Theta_1 = (R \setminus \{0\}) \times (0, \infty)]$
+
+
+\underline{Definition}: Let $\mathbb{X}$ be the sample space. A test funciton is a statistic $\phi(x) \in [0, 1]$ such that if $x \in \mathbb{X}$, we reject $H_0$ with probability $\phi(x)$.
+
+\underline{Example}: $X \iiddist Bin(n, \theta)$
+
+Some test functions:
+
+$\phi_1(x) = I(X > 5)$
+
+$\phi_2(x) = \frac{X}{n}$
+
+$\phi_3(x) = \begin{cases} 0, & x < k \\ \gamma, & x = k \\ 1, & x > k \end{cases}$
+
+\underline{Definition}: A simple test function satisfies $\phi(x) \in \{0, 1\} \forall x \in \mathbb{X}$
+
+In this case, define Rejection Region: $R_{\phi} = \{x \in \mathbb{X}: \phi(x) = 1\}$
+
+In this case, define Acceptance Region: $A_{\phi} = \{x \in \mathbb{X}: \phi(x) = 0\}$
+
+Type I Error: $P_{\theta}(\text{Reject } H_0), \theta \in \Theta_0$
+
+Type II Error: $1 - P_{\theta}(\text{Reject } H_0), \theta \in \Theta_1$
+
+\underline{Note}: Probability I reject:
+
+$P_{\theta}(\text{Reject } H_0) = \EX[\phi(X)] =: \beta_{\phi}(\theta)$
+
+Here, $\beta_{\phi}(\theta)$ is called the power function.
+
+\underline{Define}: Let $\phi$ be a test function
+
+1. The size of $\phi$ is $\underset{\theta \in \Theta_0}{sup}\beta_{\phi}(\theta)$
+
+2. $\phi$ is a level $\alpha$ test if its size is no more than $\alpha$
+
+\section{12 Mar}
+
+\underline{Example}: $X_1, ..., X_5 \sim Exp(\theta)$
+
+$H_0 : \theta = 1$ vs. $H_1 : \theta < 1$
+
+$\phi(x) = \begin{cases} 1, & \bar{X} < 1 \\ 0, \bar{X} \ge 1 \end{cases}$
+
+What is the power function? 
+
+$\beta_{\phi}(\theta) = \EX_{\theta}[\phi(x)] = P_{\theta}(\bar{X} < 1)$
+
+Since $\bar{X} \sim Gamma(n, \theta/n), \chi^2_{\nu} \overset{D}{=} Gamma(\frac{\nu}{2}, 2) \implies \frac{2n\bar{X}}{\theta} \sim \chi^2_{2n} \implies \beta_{\phi}(\theta) = P(\chi^2_{10} < \frac{10}{\theta})$
+
+Size of $\phi$: $\beta_{\phi}(1) = P(\chi^2_{10} < 10) \approx 0.56$
+
+Type II Error: What is the probability of a Type II Error if $\theta = 1/3$?
+
+$1 - \beta_{\phi}(1/3) = P(\chi^2_10 > 30) \approx 0.001$
+
+\subsection{Most Powerful Tests}
+
+For a particular $H_0$, define for $\alpha \in (0, 1), \Phi_{\alpha} = \{\phi:\phi \text{ is a test function with size }\le \alpha \}$
+
+\underline{Define}: A test $\phi^* \in \Phi_{\alpha}$ is said to be (uniformly) most powerful (MP - Simple $H_0$ or UMP - Composite $H_0$) for $H_0: \theta \in \Theta_0$ vs. $H_1: \theta \in \Theta_1$ if $\beta_{\phi^*}(\theta) \ge \beta_{\phi}(\theta) \forall \phi \in \Phi_{\alpha}$ and all $\theta \in \Theta_1$.
+
+\underline{Example}: $X_i \iiddist N(\theta, \sigma^2), \sigma^2$ known
+
+$H_0: \theta = \theta_0$ vs. $H_1: \theta = \theta_1, \theta1 > \theta_0$
+
+The z-tests has test function: $\phi(x) = I(\bar{X} > \theta_0 + z_{1-\alpha} * \frac{\sigma}{\sqrt{n}}) = I(\bar{X} > \theta_0 + k)$
+
+To enforce a size contstraint:
+
+$\beta_{\phi}(\theta_0) = P_{\theta_0}(\bar{X} > \theta_0 + k) = P(\frac{\bar{X} - \theta_0}{\sigma/\sqrt{n}} > \frac{k}{\sigma/\sqrt{n}}) = 1 - \Phi(\frac{k}{\sigma/\sqrt{n}})$, $\Phi$ is the $N(0, 1)$ CDF
+
+Want this to be $\le \alpha \implies \Phi(\frac{k}{\sigma/\sqrt{n}}) \ge 1-\alpha \implies \frac{k}{\sigma/\sqrt{n}} \ge z_{1-\alpha} \implies k \ge z_{1-\alpha}\frac{\sigma}{\sqrt{n}}$
+
+$\beta_{\phi}(\theta_1) = P_{\theta_1}(\bar{X} > \theta_0 + k) = P(Z > \frac{\theta_0 - \theta_1 + k}{\sigma/\sqrt{n}}) = 1 - \Phi(\frac{\theta_0 - \theta_1 + k}{\sigma/\sqrt{n}})$
+
+To get a required size, we can pick any k as highlighted above. However, power goes down as k increases. Thus, to maximize power under $H_1$ and satisfy the level constraint, $k = \frac{\sigma}{\sqrt{n}}z_{1-\alpha}$
+
+\underline{Theorem (Neyman-Pearson Lemma)}:
+
+Consider testing $H_0:\theta = \theta_0$ vs. $H_1: \theta = \theta_1$ (both are simple). Then any test of the form (with $k > 0, \gamma \in [0,1]$):
+
+$\phi(x) = \begin{cases} 1, & f(x|\theta_1) > kf(x|\theta_0) \\ \gamma, & f(x|\theta_1) = kf(x|\theta_0) \\ 0, & f(x|\theta_1) < kf(x|\theta_0) \end{cases}$
+
+is an MP test of a level equal to its size. 
+
+\underline{Proof}: $\frac{f(x|\theta_1)}{f(x|\theta_0)}$ has a continuous distribution (the likelihood ratio).
+
+Let $\alpha = \beta_{\phi}(\theta_0)$ and $\tilde{\phi}$ be any other test function with $\beta_{\tilde{\phi}}(\theta_0) \le \alpha$
+
+$$
+\begin{aligned}
+\beta_{\phi}(\theta_1) - \beta_{\tilde{\phi}}(\theta_1) 
+& \ge \beta_{\phi}(\theta_1) - \beta_{\tilde{\phi}}(\theta_1) - k[\beta_{\phi}(\theta_0) - \beta_{\tilde{\phi}}(\theta_0)] \\
+& = \EX_{\theta_1}[\phi(x) - \tilde{\phi}(x)] - k\EX_{\theta_0}[\phi(x) - \tilde{\phi}(x)] \\
+& = \int_{\mathbb{X}}[\phi(x) - \tilde{\phi}(x)]f(x|\theta_1)dt - k\int_{\mathbb{X}}[\phi(x) - \tilde{\phi}(x)]f(x|\theta_0)dx \\
+& = \int_{A_{\phi}}-\tilde{\phi}(x)[f(x|\theta_1) - kf(x|\theta_0)]dx + \int_{R_{\phi}}[1-\phi(x)][f(x|\theta_1) - kf(x|\theta_0)]dx \\
+& \ge 0
+\end{aligned}
+$$
+
+\underline{Example}: (normal revisited)
+
+$f(x|\theta) = (2\pi \sigma^2)^{-n/2}e^{-\frac{1}{2\sigma^2}\sum(x_i - \theta)^2}$
+
+$\frac{f(x|\theta_1)}{f(x|\theta_0)} = e^{\frac{n\bar{X}(\theta_1 - \theta_0)}{\sigma^2} - \frac{n(\theta_1^2 - \theta_0^2)}{2\sigma^2}} = c_1 e^{c_2\bar{X}}$, ($c_1, c_2 > 0$)
+
+The test $\phi(x) = \begin{cases} 1, & c_1 e^{c_2 \bar{X}} > k \\ 0, & c_1 e^{c_2 \bar{X}} < k \end{cases}$ is an MP test relative to other tests of smaller size. 
+
+There exists $\tilde{k}$ (1-1 function with k) such that $\phi(x) = \begin{cases} 1, & \bar{X} > \tilde{k} \\ 0, & \bar{X} < \tilde{k} \end{cases}$
 
 
 \end{document}
