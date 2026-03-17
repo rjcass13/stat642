@@ -1188,4 +1188,74 @@ The test $\phi(x) = \begin{cases} 1, & c_1 e^{c_2 \bar{X}} > k \\ 0, & c_1 e^{c_
 There exists $\tilde{k}$ (1-1 function with k) such that $\phi(x) = \begin{cases} 1, & \bar{X} > \tilde{k} \\ 0, & \bar{X} < \tilde{k} \end{cases}$
 
 
+\section{Mar 17}
+
+\underline{Example}: $X_i \iiddist Bern(\theta), H_0: \theta = \theta_0$ vs. $H_1: \theta = \theta_1, 0 < \theta_0 < \theta_1 < 1$
+
+$\frac{f(x||\theta_1)}{f(x|\theta_0)} = \frac{\theta_1^{\sum x_i}(1-\theta_1)^{n-\sum x_i}}{\theta_0^{\sum x_i}(1-\theta_0)^{n-\sum x_i}} = \left( \frac{1 - \theta_1}{1 - \theta_0} \right)^n \left( \frac{\frac{\theta_1}{1-\theta_1}}{\frac{\theta_0}{1-\theta_0}} \right)^{\sum x_i}$
+
+The ratio within the exponent of $\sum x_i$ is monotonically increasing (due to $\theta_1 > \theta_0$, etc.)
+
+$\implies$ the NP test is: $\begin{cases} 1, & \frac{f(x|\theta_1)}{f(x|\theta_0)} > k \\ \gamma, & \frac{f(x|\theta_1)}{f(x|\theta_0)} = k \\ 0, & \frac{f(x|\theta_1)}{f(x|\theta_0)} < k \end{cases} = \begin{cases} 1, & \sum x_i > c \\ \gamma, & \sum x_i = c \\ 0, & \sum x_i < c \end{cases}$
+
+Take $n=2, c=1, \theta_0 = 1/2, \theta_1 = 3/4, \gamma = 0$
+
+$\beta_{\phi} = P_{\theta}(\sum x_i > 1) \implies P_{\theta_0}(\sum x_i > 1) = \theta_0^2 = 1/4 = size(\phi)$
+
+$\implies P_{\theta_1}(\sum x_i > 1) = \theta_1^2 = 9/16 = 1 - P(\text{Type II Error})$
+
+Find c such that the size is $\alpha > 0.3$
+
+$\beta_{\phi}(\theta) = P_{\theta}(\sum x_i > c) + \gamma P_{\theta}(\sum x_i = c) \implies \beta_{\phi}(1/2) = P_{1/2}(\sum x_i > c) + \frac{\gamma}{4} \binom{2}{c}I_{c \in \{0, 1, 2\}}$
+
+$P_{1/2}(\sum x_i > c) \begin{cases} 3/4, & c = 0 \\ 1/4, & c = 1 \\ 0, & c = 2 \end{cases}$
+
+Need to choose c such that the first piece is as close to, but not exceeding, $\alpha$. 
+
+Take $c = 1$ and set $\gamma = \frac{\alpha - P_{1/2}(\sum x_i > 1)}{1/4(2)} = 2(0.3 - 1/4) = .6 - .5 = .1$
+
+
+
+\underline{In Class Example}: $X_i \iiddist Pois(\theta), H_0: \theta = \theta_0, H_1: \theta = \theta_1, 0 < \theta_0 < \theta_1$
+
+$\frac{f(x|\theta_1)}{f(x|\theta_0)} = \frac{\theta_1^{\sum x_i} e^{-n\theta_1}}{\theta_0^{\sum x_i} e^{-n\theta_0}}$ (the factorials cancel) $ = c(\frac{\theta_1}{\theta_0})^{\sum x_i}$
+
+Because $\theta_1 > \theta_0$, that function is monotonically increasing in terms of $\sum x_i$, so we can write $\phi(x) = \begin{cases} 1, &\sum x_i > t_0 \\ \gamma, &\sum x_i = t_0 \\ 0, &\sum x_i < t_0 \end{cases}$
+
+Power function: $\beta_{\phi}(\theta) = P_{\theta}(\sum x_i > t_0) + \gamma P(\sum x_i = t_0)$
+
+
+\underline{Example}: $X_i \iiddist Pois(\theta), H_0: \theta = \theta_0, H_1: \theta = \theta_1, 0 < \theta_1 < \theta_0$
+
+$\frac{x|\theta_1}{f(x|\theta_0)} = c(\frac{\theta_1}{\theta_0})^{\sum x_i} \implies \phi(x) = \begin{cases} 1, &\sum x_i < t_0 \\ \gamma, &\sum x_i = t_0 \\ 0, &\sum x_i > t_0 \end{cases}$
+
+Let $n=10, \theta_0 = 3$, find $t_0, \gamma$ such that $\phi$ has size 0.05
+
+$\beta_{\phi}(\theta_0) = P_{\theta_0}(\sum x_i < t_0) + \gamma P_{\theta_0}(\sum x_1 = t_0)$
+
+These actually correspond to n=1
+
+$P_{\theta_0}(\sum x_i < 1) \approx 0.0497, P_{\theta_0}(\sum x_i < 2) \approx 0.1991$
+
+Thus we choose $t_0 = 1$ (remember, highest value where that prob is less than $\alpha$), $\implies \gamma = \frac{\alpha - 0.0497}{e^{-30}30^1} \approx 0.002$
+
+\underline{Example}: $X_i \iiddist N(\theta, \sigma^2), H_0: \theta = \theta_0, H_1: \theta = \theta_1, \theta_1 > \theta_0$
+
+$\phi(x) = I(\bar{X} > \theta_0 + \frac{\sigma}{\sqrt{n}}Z_{\alpha - 1})$. This test is MP for $H_0$ vs. $H_1$ (note that it does not depend on $\theta_1$). It is also uniformly MP (UMP) for $H_0: \theta = \theta_0, H_1': \theta > \theta_0$
+
+Recall that: $\beta_{\phi}(\theta) = 1 - \Phi(\frac{\sqrt{n}(\theta_0 - \theta)}{\sigma} + z_{1-\alpha}) \implies \underset{\theta \le \theta_0}{sup}\beta_{\phi}(\theta) = \alpha \implies $ It is UMP for $H_0': \theta \le \theta_0, H_1': \theta > \theta_0$
+
+
+\underline{Example}: $X_1, X_2 \sim Unif(\theta, \theta + 1), H_0: \theta = 0, H_1: 0 < \theta < 1$
+
+$\frac{f(x|\theta_1)}{f(x|\theta_0)} = \frac{I(\theta_1 < x_{(1)} < x_{(2)} < \theta_1 + 1)}{(\theta_0 < x_{(1)} < x_{(2)} < 1)} = \begin{cases} 1, & \theta_1 < x_{(1)} < x_{(2)} < 1 \\ 0, & 0 < x_{(1)} < \theta_1 \\ \infty, & x_{(2)} > 1 \end{cases}$
+
+Take $k=0$: the power function is $\beta_{\phi}(\theta_0) = (1-\theta_1)^2 + \gamma (1 - (1-\theta_1)^2)$
+
+Take $k=1$: the power function is $\beta_{\phi}(\theta_0) = \gamma (1-\theta_1)^2$
+
+Since the rejection region always depends on $\theta_1$, the NP test for a fixed $\theta_1$ can't be UMP.
+
+If I restrict $H_1': 0 < \theta < 1-\sqrt{\alpha}$, then the UMP test is is: $\phi^*(x) = \begin{cases} 1, & X_{(2)} > 1 \text{ or } X_{(1)} > 1 - \sqrt{\alpha} \\ 0, & \text{ otherwise } \end{cases}$
+
 \end{document}
