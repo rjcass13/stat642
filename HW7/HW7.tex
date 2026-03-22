@@ -1,0 +1,193 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, cancel, mathtools, bm}
+\usepackage[left=.5in, right=.5in, top=1in, bottom=1in]{geometry}
+\usepackage[most]{tcolorbox}
+\usepackage[skip=1em,indent=0pt]{parskip}
+\setlength{\parindent}{0pt}
+\newcommand{\statvec}[1]{\underset{\sim}{\bm{#1}}} % Vector symbol (tilde under vector)
+\DeclareMathOperator{\EX}{\mathbb{E}} % Expected Value symbol
+\newcommand{\indep}{\perp\!\!\!\!\perp} % Independence symbol
+\newcommand{\real}{\mathbb{R}} % Simplified 'Reals' indicator
+\newcommand{\pto}{\overset{P}{\to}}
+\newcommand{\asto}{\overset{a.s.}{\to}}
+\newcommand{\rthto}{\overset{L^r}{\to}}
+\newcommand{\dto}{\overset{D}{\to}}
+\newcommand{\ext}{\EX_{\theta}}
+% Force all aggregate symbols to always put values above/below
+\let\Oldint=\int
+\let\Oldsum=\sum
+\let\Oldprod=\prod
+\let\Oldbigcup=\bigcup
+\let\Oldbigcap=\bigcap
+\let\Oldlim=\lim
+\renewcommand{\int}{\Oldint\limits} 
+\renewcommand{\sum}{\Oldsum\limits} 
+\renewcommand{\prod}{\Oldprod\limits} 
+\renewcommand{\bigcup}{\Oldbigcup\limits} 
+\renewcommand{\bigcap}{\Oldbigcap\limits} 
+\renewcommand{\lim}{\Oldlim\limits} 
+\newcommand{\infint}{\int_{-\infty}^{\infty}}
+\newcommand{\iiddist}{\overset{\mathrm{iid}}{\sim}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\boldred}[1]{\textbf{\textcolor{red}{#1}}}
+
+
+\begin{document}
+
+\section{}
+
+$X_i \iiddist Bin(10, \theta), \theta \in \Theta = \{1/4,1/2\}, H_0:\theta = 1/4, H_1: \theta = 1/2$, compute the power function of $\phi(x) = I(x \le 3)$
+
+$\beta{\phi}(\theta) = P(x \le 3) = \sum_{k=0}^3 \binom{10}{k}\theta^k (1-\theta)^{10-k} = (1-\theta)^{10} + 10\theta(1-\theta)^9 + 45\theta^2(1-\theta)^8 + 120 \theta^3(1-\theta)^7$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{}
+
+Box contains 4 marbles, $\theta$ are red, and $4-\theta$ are blue. Test: $H_0: \theta = 3, H_1: \theta \neq 3$. Two marbles will be drawn simultaneously and $H_0$ will be rejected if the two marbles are the same color. If they are different, $H_0$ will not be rejected.
+
+(a)
+
+Define the test function $\phi$ corresponding to the above testing procedure
+
+$\phi(x) = \begin{cases} 1, & \text{Marbles same color} \\ 0, & \text{Marbles different colors} \end{cases}$
+
+(b)
+
+Find the power function of the test
+
+Probability of getting two marbles of same color: 
+
+- Two Red: $\frac{\theta}{4}\frac{\theta-1}{3} = \frac{\theta^2}{12} - \frac{\theta}{12}$
+
+- Two Blue: $\frac{4-\theta}{4}\frac{3-\theta}{3} = 1 - \frac{7\theta}{12} + \frac{\theta^2}{12}$
+
+- Sum them: $\frac{\theta^2}{12} - \frac{\theta}{12} + 1 - \frac{7\theta}{12} + \frac{\theta^2}{12} = \frac{2\theta^2}{12}-\frac{8\theta}{12} + 1 = \frac{\theta^2}{6} - \frac{2\theta}{3} + 1$
+
+$\beta_{\phi}(\theta) = \frac{\theta^2}{6} - \frac{2\theta}{3} + 1$
+
+(c)
+
+Compute the size of the test. Explain why this is the same as the probability of a Type I error for this problem
+
+Size: $\beta_{\phi}(3) = \frac{3^2}{6}-\frac{2(3)}{3} + 1 = \frac{3}{2} - 1 = \frac{1}{2}$
+
+Size = $\frac{1}{2}$
+
+Size is the maximum probability of committing a Type I Error. Because we only have two possible outcomes for the experiment, and each outcome is directly tied to rejection decision, there is only 1 value for Type I Error (ie. there is no range of Type I Error amounts), thus it must be the max value. 
+
+(d)
+
+Referring to (a)-(c), explain how they would change if the two marbles were drawn with replacement (ie. replace the first after drawing it). Don't need to actually do it, just describe in some detail.
+
+If the draws were done with replacement, then we would adjust the calculations in part (b), where the probability of drawing 2 marbles of the same color changes (instead of the probability being different on the second draw, the second draw has the same prob. as the first draw, so the probaility of getting 2 marbles is just $\frac{\theta^2}{16}$ for red, and $\frac{(4-\theta)^2}{16}$). This would then change the expectation in part (b), and adjust the size in part (c). 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{CB2 8.19}
+
+$X: f(x) = e^{-x}, x > 0$. One obs. obtained on R.V. $Y = X^{\theta}$, a test $H_0: \theta = 1, H_1: \theta = 2$ needs to be constructed. Find the UMP level $\alpha = .1$ and compute the Type II Error prob. 
+
+$Y = X^{\theta} \implies X = Y^{1/\theta}, \frac{d}{dy}Y^{1/\theta} = \frac{1}{\theta}Y^{1/\theta -1} \implies f(y|\theta) = e^{-y^{1/\theta}}\frac{1}{\theta}Y^{1/\theta - 1}$
+
+Neyman Pearson Test says we reject when $\frac{f(x|\theta_1)}{f(x|\theta_0)} > k \implies \frac{f(y|2)}{f(y|1)} > k \implies \frac{1 e^{y^1}y^{1/2-1}}{2 e^{y^1/2} y^{1-1}} = \frac{1}{2}e^{y-y^{1/2}}y^{-1/2} > k$
+
+
+
+\boldred{FINISH ME}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{CB2 8.20}
+
+\begin{center}
+\begin{tabular}{c c c c c c c c} 
+ x & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\ [0.5ex] 
+ \hline
+ $f(x|H_0)$ & .01 & .01 & .01 & .01 & .01 & .01 & .94 \\ 
+ $f(x|H_1)$ & .06 & .05 & .04 & .03 & .02 & .01 & .79 \\
+\end{tabular}
+\end{center}
+
+Use Neyman-Pearson to find the most powerful test fort $H_0, H_1$ with size $\alpha = 0.04$. Compute that probability of Type II Error for this test.
+
+
+For the Neyman-Pearson test, we just need to ratio: $\frac{f(x|\theta_1)}{f(x|\theta_0)}$, which is given in the below table:
+
+\begin{center}
+\begin{tabular}{c c c c c c c c} 
+ x & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\ [0.5ex] 
+ \hline
+ $\frac{f(x|H_1)}{f(x|H_0)}$ & 6 & 5 & 4 & 3 & 2 & 1 & .84 \\ 
+\end{tabular}
+\end{center}
+
+As x increases, that ratio decreases. We need $P(X \le c|H_0) = \alpha$. Using the first table, we can see that if we let $c=4, P(X \le 4|H_0) = .01+.01+.01+.01 = 0.04$. Thus we will pick $c=4$.
+
+This then gives a Type II Error of $P(X \ge 5 | H_1) = .02 + .01 + .79 = .82$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{CB2 8.23}
+
+$X_1 \sim Beta(\theta, 1)$
+
+(a)
+
+$H_0: \theta \le 1, H_1: \theta > 1$, find size and sketch the power function of test that rejects $H_0$ if $X > 1/2$. 
+
+\boldred{FINISH ME}
+
+(b)
+
+Find the MP test of $H_0: \theta = 1, H_1: \theta = 2$
+
+\boldred{FINISH ME}
+
+(c)
+
+Is there a UMP test for $H_0: \theta \le 1, H_1: \theta > 1$? Is so, find it. If not, prove so. 
+
+\boldred{FINISH ME}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{}
+
+Compare CB2 8.13. $X_1, X_2 \iiddist Unif(\theta, \theta+1), 0 \le \theta < 1$. Let $0 < c < 1, \alpha < (1-c)^2, H_0: \theta = 0, H_1: 0 < \theta \le c$
+
+(a)
+
+Review the derviation of the MP test done in class for $H'_0: \theta = 0, H'_1: \theta = \theta_1$ for fixed $\theta_1 \in (,c]$, which gave the following test:
+
+$\phi(x) = \begin{cases} 1, & X_{(2)} \\ \alpha(1-\theta_1)^{-2}, & \theta_1 < X_{(1)} < X_{(2)} < 1 \\ 0, & X_{(1)} < \theta_1 \end{cases}$
+
+(b)
+
+Compute the power of the test from (a) if the true value of the parameter is indeed $\theta_1$
+
+\boldred{FINISH ME}
+
+(c)
+
+Because the test function from (a) depends on $\theta_1$, it cannot be UMP for that comparison. Use parts (a) and (b) to show that $\phi^*(x) = I(X_{(1)} > 1 - \sqrt{\alpha} \text{ or } X_{(2)} > 1)$ is the UMP. 
+
+(Hint: First, show that it has the correct size. Then, show its power matches that of the test in part (a) for any $\theta_1 \in (0,c]$. Explain why this shows it is UMP)
+
+\boldred{FINISH ME}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{}
+
+Compare CB2 8.15. $X_i \iiddist N(0, \theta), \theta > 0$. Find the UMP test of size $\alpha$ for $H_0: \theta \le 1, H_1: \theta > 1$
+
+\boldred{FINISH ME}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{CB2 8.28}
+
+\boldred{FINISH ME}
+
+\end{document}
