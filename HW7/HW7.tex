@@ -90,11 +90,21 @@ $X: f(x) = e^{-x}, x > 0$. One obs. obtained on R.V. $Y = X^{\theta}$, a test $H
 
 $Y = X^{\theta} \implies X = Y^{1/\theta}, \frac{d}{dy}Y^{1/\theta} = \frac{1}{\theta}Y^{1/\theta -1} \implies f(y|\theta) = e^{-y^{1/\theta}}\frac{1}{\theta}Y^{1/\theta - 1}$
 
-Neyman Pearson Test says we reject when $\frac{f(x|\theta_1)}{f(x|\theta_0)} > k \implies \frac{f(y|2)}{f(y|1)} > k \implies \frac{1 e^{y^1}y^{1/2-1}}{2 e^{y^1/2} y^{1-1}} = \frac{1}{2}e^{y-y^{1/2}}y^{-1/2} > k$
+Neyman Pearson Test says we reject when $\frac{f(x|\theta_1)}{f(x|\theta_0)} > k \implies \frac{f(y|2)}{f(y|1)} > k \implies \frac{1 e^{y^1}y^{1/2-1}}{2 e^{y^1/2} y^{1-1}} = \frac{1}{2}e^{y-y^{1/2}}y^{-1/2} = \frac{1}{2} e^{y^{1/2}} y^{-1/2} > k$
 
+To see how this behaves, I plotted it.
 
+\begin{center}
+    \includegraphics[width=.45\textwidth]{q3.png}
+\end{center}
 
-\boldred{FINISH ME}
+The turning point is at y = 1, so for $y \le 1$, it is decreasing, and for $y \ge 1$ it is increasing. Thus, rejecting for $\frac{1}{2} e^{y^{1/2}} y^{-1/2} > k$ is the same as rejecting for $y \le c_0$ or $y \ge c_1$ (some upper and lower bounds). 
+
+We know that $\alpha = P(Y \le c_0 | \theta = 1) + P(Y \ge c_1 | \theta_1) = 1 - e^{-c_0} + e^{-c_1}$. We also know that the acceptance ratios must be equal: $\frac{f(c_0|2)}{f(c_0|1)} = \frac{f(c_1|2)}{f(c_1|1)} \implies \frac{1}{2} e^{c_0^{1/2}} c_0^{-1/2} = \frac{1}{2} e^{c_1^{1/2}} c_1^{-1/2}$
+
+Solving numerically, we get $c_0 = .0765, c_1 = 3.638 \implies \phi(y) = \begin{cases} 1, & 0.0765 < y < 3.638 \\ 0, & \text{otherwise} \end{cases}$
+
+The Type II Error probability is $P(Accept|H_a \text{ is true}) = P(c_0 < y < c_1 | \theta = 2) = \int_{c_0}^{c_1} \frac{1}{2} e^{y^{1/2}} y^{-1/2}dy = -e^{-y^{1/2}}|_{c_0}^{c_1} \approx .6098$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -136,13 +146,27 @@ $X_1 \sim Beta(\theta, 1)$
 
 $H_0: \theta \le 1, H_1: \theta > 1$, find size and sketch the power function of test that rejects $H_0$ if $X > 1/2$. 
 
-\boldred{FINISH ME}
+$\phi(x) = \begin{cases} 1, & X > 1/2 \\ 0, & \text{ otherwise} \end{cases}$
+
+$\beta_{\phi}(\theta) = P(X > 1/2|\theta) = \int_{1/2}^1 \frac{\Gamma(\theta + 1)}{\Gamma(\theta)\Gamma(1)} x^{\theta-1}(1-x)^{1-1}dx = \int_{1/2}^1 \frac{\theta\Gamma(\theta)}{\Gamma(\theta)} x^{\theta-1} dx \int_{1/2}^1 \theta x^{\theta-1}dx = x^{\theta}|_{1/2}^1 = 1 - (\frac{1}{2})^{\theta}$
+
+Plot of power function:
+
+\begin{center}
+    \includegraphics[width=.45\textwidth]{q5_a.png}
+\end{center}
+
+Size: $\underset{\theta \in H_0}{sup}\beta_{\phi}(\theta) = \underset{\theta \le 1}{sup} 1 - (\frac{1}{2})^{\theta} = 1 - \frac{1}{2} = \frac{1}{2}$
 
 (b)
 
 Find the MP test of $H_0: \theta = 1, H_1: \theta = 2$
 
-\boldred{FINISH ME}
+MP test given by $\frac{f(x|\theta=2)}{f(x|\theta=1)} > k \implies \frac{f(x|2)}{f(x|1)} = \frac{\frac{\Gamma(3)}{\Gamma(2)\Gamma(1)} x^{2-1}(1-x)^{1-1}}{\frac{\Gamma(2)}{\Gamma(1)\Gamma(1)}x^{1-1}(1-x)^{1-1}} = \frac{\Gamma(3)x}{\Gamma(2)\Gamma(1)} = \frac{2}{1}x \implies 2x > k \implies \text{Reject when } x > \frac{k}{2}$
+
+Going back to the size: $\alpha = \underset{\theta=1}{sup} \beta_{\phi}(\theta) = \beta(1) = \int_{k/2}^1 \frac{\Gamma(2)}{\Gamma(1)\Gamma(1)}x^{1-1}(1-x)^{1-1}dx = \int_{k/2}^1 dx = 1 - \frac{k}{2} \implies \alpha = 1 - \frac{k}{2} \implies \frac{k}{2} = 1 - \alpha$
+
+We know we reject when $X > \frac{k}{2} \implies$ we reject when $X > 1 - \alpha$
 
 (c)
 
