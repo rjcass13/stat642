@@ -1258,4 +1258,91 @@ Since the rejection region always depends on $\theta_1$, the NP test for a fixed
 
 If I restrict $H_1': 0 < \theta < 1-\sqrt{\alpha}$, then the UMP test is is: $\phi^*(x) = \begin{cases} 1, & X_{(2)} > 1 \text{ or } X_{(1)} > 1 - \sqrt{\alpha} \\ 0, & \text{ otherwise } \end{cases}$
 
+
+\section{19 Mar}
+
+Suppose $T$ is a sufficient statistic:
+
+$\frac{f(x|\theta_1)}{f(x|\theta_0)} = \frac{h(x)g(T(x); \theta_1)}{h(x)g(T(x); \theta_0)} = \frac{g(T(x); \theta_1)}{g(T(x); \theta_0)} >, =, < k$
+
+\underline{Definition}: Let $T$ be any univariate statistic and $g(t|\theta)$ be its PDF/PMF. We say $g(t|\theta)$ has the monotone likelihood ratio (MLR) property if: $\frac{g(t|\theta_2)}{g(t|\theta_1)}$ is non-decreasing in $t$ whenever $\theta_2 > \theta_1$.
+
+\underline{Example}: $X_i \iiddist Gamma(\theta, scale=\beta), \beta$ is known. 
+
+The sufficient statistic $T = \sum ln(x_i)$. $f(x|\theta) = \frac{1}{(\Gamma(\theta)\beta^{\theta})^n}e^{(\theta-1)T - \frac{\sum x_i}{\beta}} = e^{-\frac{1}{\beta}\sum x_i} * \frac{1}{\Gamma^n(\theta)\beta^{n\theta}}e^{(\theta-1)T}$
+
+Let $\theta_2 > \theta_1 \implies \frac{g(t|\theta_2)}{g(t|\theta_1)} = \left[ \frac{\Gamma(\theta_1)}{\Gamma(\theta_2)} \right]^n \beta^{-n(\theta_2 - \theta_1)} e^{(\theta_2 - \theta_1)t} \implies T = \sum ln(x_i)$ has the MLR property.
+
+\underline{Theorem} - (Karlin-Rubin): $\Theta \in \real^1$
+
+Let $f(x|\theta)$ be a family with univariate sufficient statistic T that has MLR. Then any test function of the form $\phi(x) = \begin{cases} 1, & T(X) > t_0 \\ \gamma, & T(X) = t_0 \\ 0, & T(X) < t_0 \end{cases}$ is the UMP test of level $\gamma = P_{\theta_0}(T > t_0)$ for $H_0: \theta \le \theta_0, H_1: \theta > \theta_0$.
+
+\underline{Proof}: Let $\bar{\phi}$ be any test function with size at most $\alpha$. 
+
+Step 1: Show that $\underset{\theta \le \theta_0}{sup} \beta_{\phi}(\theta) = \alpha$. See Problem 8.26(c) (it's long)
+
+Step 2: Consider $H'_0: \theta = \theta_0, H'_1: \theta = \theta', \theta' > \theta_0$. Then, $T(x) >, =, < t_0 \implies \frac{g(T(x)|\theta')}{g(T(x)|\theta_0)} >, =, < k' \implies \frac{f(x|\theta')}{f(x|\theta)} >, =, k'$
+
+Therefore for any test function $\phi'$ satisfying $\beta_{\phi'} \le \beta_{\phi}(\theta_0) = \alpha$, $\beta_{\phi'}(\theta') \le \beta_{\phi}(\theta')$
+
+Since $\theta'$ is arbitrary, $\phi$ must be UMP for $H'_0: \theta = \theta_0, H_1: \theta > \theta_0$
+
+Step 3: $\beta_{\bar{\phi}} \le \underset{\theta \le \theta_0}{sup}\beta_{\bar{\phi}}(\theta) \le \alpha$
+
+By step 2 $\implies \beta_{\bar{\phi}}(\theta') \le \beta_{\phi}(\theta')$ for any $\theta' > \theta_0$
+
+\underline{Example}: $X_i \iiddist Unif(0, \theta)$
+
+$T = X_{(n)}$ is sufficient. Let $\theta_2 > \theta_1 > 0, H_0: \theta \le \theta_0, H_1: \theta > \theta_0$
+
+$\frac{f(x|\theta_2)}{f(x||\theta_1)} = \frac{\theta_2^{-n}}{I(X_{(n)} \le \theta_2)}{\theta_1^{-n}}{I(X_{(n)} \le \theta_1)} = \begin{cases} (\frac{\theta_1}{\theta_2})^n, & X_{(n)} \le \theta_1 \\ \infty, & \theta_1 < X_{(n)} \le \theta_2 \end{cases}$ which is a non-decreasing function. 
+
+Since $T = X_{(n)}$ has MLR, any test of the form $\phi(x) = \begin{cases} 1, & X_{(n)} > t_0 \\ 0, & X_{(n)} < t_0 \end{cases}$ is UMP of its size.
+
+Set the Type I Error Rate to $\alpha$ and find $t_0$. 
+
+$\beta_{\phi}(\theta_0)  = P_{\theta_0}(X_{(n)} > t_0) = 1 - P_{\theta_0}(X_1 < t_0)^n = \begin{cases} 1, & t_0 > \theta_0 \\ 1 - (\frac{t_0}{\theta_0})^n, & t_0 < \theta_0 \end{cases} \implies 1 - (\frac{t_0}{\theta_0})^n = \alpha \implies t_0 = \theta_0(1-\alpha)^{1/n}$
+
+If you switch the conditions on the hypostheses, you switch the order of the test function. 
+
+Defaults: MLR non-decreasing, $H_0: \theta \le \theta_0$
+
+\begin{center}
+\begin{tabular}{ c c c }
+ $H_0$/MLR & Non-Dec & Non-Inc \\ 
+ $\theta \le \theta_0$ & $T > t_0$ & $T < t_0$ \\  
+ $\theta \ge \theta_0$ & $T < t_0$ & $T > t_0$    
+\end{tabular}
+\end{center}
+
+indicates when we reject. 
+
+\underline{Example}: (Non-existence of UMP for two-sided tests)
+
+$X_i \iiddist N(\theta, \sigma^2), \sigma^2$ known. 
+
+Let $\phi^+(x)$ be UMP for $H^+_0: \theta \le \theta_0, H^+1_1: \theta > \theta_0$, and let $\phi^-(x)$ be UMP for $H^-_0: \theta \ge \theta_0, H^-_1L \theta < \theta_0$ for level $\alpha$. 
+
+Now suppose $\phi$ is UMP for level $\alpha$ for $H_0: \theta = \theta_0, H_1: \theta \neq \theta_0$
+
+Note that $\beta_{\phi^+}(\theta_0) = \beta_{\phi^-}(\theta_0) = \alpha \implies \beta_{\phi}(\theta') \le \beta_{\phi^+}(\theta'), \theta' > \theta_0$ because both $\phi$ and $\phi^+$ are size $\alpha$ for $H_0$ vs. $H^+_1$
+
+Similarly, $\beta_{\phi}(\theta') \le \beta_{\phi^-}(\theta'), \theta' < \theta_0$. By NP, $\phi = \phi^+ = \phi^-$ (contradiction since $\phi^- \neq \phi^+$).
+
+\section{Likelihood Ratio Tests}
+
+$H_0: \theta \in \Theta_0, H_1: \theta \in \Theta_1, \Theta = \Theta_0 \cup \Theta_1$
+
+\underline{Definte}: The (generalized) Likelihood ratio is $\lambda(x) = \frac{\underset{\theta \in \Theta_0}{sup} L(\theta|x)}{\underset{\theta \in \Theta}{sup} L(\theta|x)}$
+
+Define $\hat{\theta}$ to be the ordinary MLE and $\hat{\theta_0} = \underset{\theta \in \Theta_0}{argmax}L(\theta|x)$. Then $\lambda(x) = \frac{L(\hat{\theta_0}|x)}{L(\hat{\theta}|x)}$
+
+\underline{Example}: $X_i \iiddist N(\theta, \sigma^2), \sigma^2$ known.
+
+$H_0: \theta \le \theta_0, H_1: \theta > \theta_0$
+
+We know $\hat{\theta} = \bar{X}$. $l'(\theta|x) = \frac{n}{\sigma^2}(\bar{x}- \mu) = \begin{cases} <0, & \theta > \bar{x} \\ =0, & \theta = \bar{x} \\ >0, & \theta < \bar{x} \end{cases}$ 
+
+$\implies \hat{\theta_0} \begin{cases} \bar{x}, & \bar{x} \le \theta_0 \\ \theta_0, & \bar{x} > \theta_0 \end{cases}$
+
 \end{document}
