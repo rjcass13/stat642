@@ -1335,7 +1335,7 @@ $H_0: \theta \in \Theta_0, H_1: \theta \in \Theta_1, \Theta = \Theta_0 \cup \The
 
 \underline{Definte}: The (generalized) Likelihood ratio is $\lambda(x) = \frac{\underset{\theta \in \Theta_0}{sup} L(\theta|x)}{\underset{\theta \in \Theta}{sup} L(\theta|x)}$
 
-Define $\hat{\theta}$ to be the ordinary MLE and $\hat{\theta_0} = \underset{\theta \in \Theta_0}{argmax}L(\theta|x)$. Then $\lambda(x) = \frac{L(\hat{\theta_0}|x)}{L(\hat{\theta}|x)}$
+Define $\hat{\theta}$ to be the ordinary MLE and $\hat{\theta_0} = \underset{\theta \in \Theta_0}{argmax}L(\theta|x)$. Then $\lambda(x) = \frac{L(\hat{\theta}_0|x)}{L(\hat{\theta}|x)}$
 
 \underline{Example}: $X_i \iiddist N(\theta, \sigma^2), \sigma^2$ known.
 
@@ -1343,6 +1343,138 @@ $H_0: \theta \le \theta_0, H_1: \theta > \theta_0$
 
 We know $\hat{\theta} = \bar{X}$. $l'(\theta|x) = \frac{n}{\sigma^2}(\bar{x}- \mu) = \begin{cases} <0, & \theta > \bar{x} \\ =0, & \theta = \bar{x} \\ >0, & \theta < \bar{x} \end{cases}$ 
 
-$\implies \hat{\theta_0} \begin{cases} \bar{x}, & \bar{x} \le \theta_0 \\ \theta_0, & \bar{x} > \theta_0 \end{cases}$
+$\implies \hat{\theta}_R$ (Restricted MLE, MLE under $\Theta_0$) $= \begin{cases} \bar{X}, & \bar{X} \le \theta_0 \\ \theta_0, & \bar{X} > \theta_0 \end{cases}$
+
+$\lambda(x) = \frac{L(\hat{\theta}_R)|x}{L(\hat{\theta}|x)} = \begin{cases} 1, & \bar{X} \le 0 \\ \frac{e^{-\frac{1}{2\sigma^2}\sum (x_i - \theta_0)^2}}{e^{-\frac{1}{2\sigma^2}\sum (x_i - \bar{X})^2}}, & \bar{X} > \theta_0 \end{cases}$
+
+Reject if $\lambda(x) < c, 0 < c < 1$
+
+Simplifying: $ln(\lambda(x)) < ln(c) \iff \frac{-n}{2\sigma^2}(\bar{X} - \theta_0)^2 < ln(c)$
+
+Reject if $\bar{X} > \theta_0$ (because the likelihood ratio indicates we only don't reject when $\bar{X} > \theta_0$) and $\bar{X} - \theta_0 > \sqrt{\frac{-2\sigma^2}{n}ln(c)} = k \implies$ Reject when $\bar{X} > \theta_0 + k$. This is basically just the Karlin-Rubin.
+
+\underline{Example}:
+
+Same as above, $\sigma^2$ is known, but now, $H_0: \theta = \theta_0, H_1: \theta \neq \theta_0$
+
+For the likelihood ratio, no maximiazation under null because it is simple, and we already did that part above. 
+
+We know $ln(\lambda(x)) = \frac{-2\sigma^2}{n}(\bar{X} - \theta_0)^2$. When is this $< ln(c)$
+
+$\frac{-2\sigma^2}{n}(\bar{X} - \theta_0)^2 < ln(c) \iff |\bar{X} - \theta_0| > \sqrt{\frac{-2\sigma^2}{n}ln(c)} \iff \bar{X} > \theta_0 + k$ or $\bar{X} < \theta_0 - k$
+
+In fact, this is UMP unbiased
+
+\underline{Example}
+
+Now, $\sigma^2$ unknown
+
+$H_0:\theta = \theta_0, H_1: \theta \neq \theta_0$ ($\theta$ is now the full paramater space, both $\theta$ and $\sigma^2$)
+
+$\hat{\theta} = \bar{X}, \hat{\sigma}^2 = \frac{n-1}{n}S^2$
+
+$\hat{\theta}_R = \theta_0, \hat{\sigma}^2_R = \frac{1}{n}\sum (x_i - \theta_0)^2$
+
+$\lambda(x) = \frac{(2\pi \hat{\sigma}^2_R)^{-n/2}e^{-\frac{1}{2\hat{\sigma}^2_R}\sum(x_i - \theta_0)^2}}{(2\pi \hat{\sigma}^2)^{-n/2}e^{-\frac{1}{2\hat{\sigma}^2}\sum(x_i - \bar{X})^2}}$ 
+
+$-\frac{1}{2\hat{\sigma}^2_R}\sum (x_i - \theta_0)^2 = \frac{-1}{2(1/n)} = \frac{-n}{2}$
+
+$S^2 = \frac{1}{n}\sum(x_i - \bar{X})^2$
+
+$\implies \lambda(x) = (\frac{\hat{\sigma}^2_R}{\hat{\sigma}^2})^{-n/2} = a_n(1 + \frac{(\bar{X} - \theta_0)^2}{S^2})^{-n/2}$
+
+When $T = \frac{\bar{X} - \theta_0}{S/\sqrt{n}}, \lambda(x) = a_n(1 + \frac{T^2}{n})^{-n/2} \implies \lambda(x) < c \iff |T| > t_0$
+
+$\implies$ the Likelihood ratio test (LRT) is the two-sided t-test
+
+For size $\alpha$, we want: $P_{\theta_0}(|T| > t_0) = \alpha \implies t_0 = qt(1-\frac{\alpha}{2}, df = n-1)$
+
+\underline{Example} $X_i \iiddist Unif(0, \theta), \theta > 0, H_0: \theta = \theta_0, H_1:\theta \neq \theta_0$
+
+$\lambda(x) = \frac{L(\theta_0|x)}{L(X_{(n)}|x)} = \frac{\theta_0^{-n}I(X_{(n)} \le \theta_0)}{X_{(n)}^{-n}I(X_{(n)} \le X_{(n)})} = (\frac{X_{(n)}}{\theta_0})^n I(X_{(n)} \le \theta_0) = \begin{cases} (\frac{X_{(n)}}{\theta_0})^n, & X_{(n)} \le \theta_0 \\ 0, & X_{(n)} > \theta_0 \end{cases}$
+
+We reject when $X_{(n)} > \theta_0$ or if $X_{(n)} < \theta_0$ and $(\frac{X_{(n)}}{\theta_0})^n < c$
+
+$\alpha = P_{\theta_0}(X_{(n)} \le \theta_0 c^{1/n}) = (P_{\theta_0}(X_1 < \theta_0 c^{1/n}))^n = (\frac{\theta_0 c^{1/n}}{\theta_0 - 0}) = c$
+
+$\implies \phi(x) = I(\lambda(x) < \alpha) = \begin{cases} 1, & X_{(n)} > \theta_0 \text{ or } X_{(n)} < \theta_0 \alpha^{1/n} \\ 0, & \text{ otherwise} \end{cases}$
+
+\underline{Example}: $X_i \iiddist Gamma(\gamma, scale = \theta), \gamma$ is known
+
+$H_0: \theta=\theta_0, H_1: \theta \neq \theta_0$
+
+$\hat{\theta} = \frac{\sum x_i}{n\gamma} = \frac{1}{\gamma}\bar{X}$
+
+$$
+\begin{aligned}
+\implies \lambda(x) 
+& = \frac{L(\theta_0|x)}{L(\hat{\theta}|x)} \\
+& = \frac{[\Gamma(\gamma)\theta_0^{\gamma}]^{-n} e^{-\frac{1}{\theta_0}\sum x_i}}{[\Gamma(\gamma)\hat{\theta}^{\gamma}]^{-n} e^{-\frac{1}{\hat{\theta}} \sum x_i}} \\ 
+& = (\frac{\bar{X}}{\theta_0 \gamma})^{n\gamma} e^{n\gamma [1 -\frac{\bar{X}}{\theta_0 \gamma}]} \\
+& = h(\frac{\bar{X}}{\theta_0 \gamma})^n \text{ where } h(y) = y^{\gamma} e^{\gamma (1-\gamma)} \\ 
+& \implies h'(y) = \gamma y^{\gamma -1} e^{\gamma(1-y)} - \gamma y^{\gamma} e^{\gamma(1-y)} = \gamma y^{\gamma - 1} e^{\gamma(1-y)}[1-y]
+\end{aligned}
+$$
+
+This is increasing from $y \in (0, 1)$, then decreasing from $y \in (1, \infty)$. 
+
+We want to find some c such that $h(y_1) = c$ and $h(y_2) = c$ and the total region between those points is $\alpha$
+
+To find a size $\alpha$ test of the form: $\phi(x) = \begin{cases} 1, & \bar{X} > b_2 \text{ or } \bar{X} < b_1 \\ 0, & \text{ otherwise} \end{cases}$
+
+We need:
+
+(1) $P_{\theta_0}(\bar{X} > b_2) + P_{\theta_0}(\bar{X} < b_1) = \alpha$
+
+(2) $h(\frac{b_1}{\theta_0 \gamma}) = h(\frac{b_2}{\theta_0 \gamma})$
+
+System of equations, use root finding methods to find the cutoffs.
+
+\subsection{Large-Sample Testing}
+
+\underline{Example}: $X_i \iiddist N(\theta, \sigma^2)$ \underline{study 2 variable version for EXAM}, $\sigma^2$ known, $H_0: \theta = \theta_0, H_1: \theta \neq \theta_0$
+
+$\lambda(x) = e^{-\frac{n}{2\sigma^2}(\bar{X} - \theta_0)^2}$
+
+$-2ln(\lambda(x)) = (\frac{\sqrt{n}(\bar{X} - \theta_0)}{\sigma})^2 = (N(0, 1))^2 \overset{D}{=} \chi^2_1$
+
+\underline{Example}: $X_i \iiddist Exp(\theta), H_0: \theta = \theta_0, H_1: \theta \neq \theta_0$
+
+$\lambda(x) = \frac{\frac{1}{\theta_0^n}e^{-\frac{n\bar{X}}{\theta_0}}}{\frac{1}{\bar{X}}e^{-n}} = e^{n[1 - \frac{\bar{X}}{\theta_0} + ln(\frac{\bar{X}}{\theta_0})]}$
+
+$-2ln(\lambda(x)) = 2n[g(\bar{X}) - g(\theta_0)], g(x) = \frac{x}{\theta_0} - ln(x)$
+
+$g'(x) = \frac{1}{\theta_0} - \frac{1}{x} \implies g'(\theta_0) = 0$
+
+Need to use the 2nd order Delta Method. Since $\sqrt{n}(\bar{X} - \theta_0) \dto N(0, \theta_0^2)$, the 2nd order delta method says: $2n(g(\bar{X}) - g(\theta_0)) \approx g''(\theta_0)[\sqrt{n}(\bar{X} - \theta_0)]^2 = [\frac{\sqrt{n}(\bar{X} - \theta_0)}{\theta_0}]^2 \dto \chi^2_1$
+
+$\phi(x) = \begin{cases} 1, & \lambda(x) < c \\ 0, & \lambda(x) \ge c \end{cases} = \begin{cases} 1, & -2ln(\lambda(x)) > k \\ 0, & -2ln(\lambda(x)) \le k \end{cases}$
+
+Choosing $k = \chi^2_{1, 1-\alpha}: \beta_{\phi}(\theta_0) \dto \alpha$
+
+
+\underline{Theorem}: Wilks'
+
+Under regularity assumptions, if $H_0: \theta = \theta_0$ is true, $\Theta \subset \real^k$: $-2ln(\lambda(x)) \dto \chi^2_k$. 
+
+\underline{Proof}: (k=1)
+
+$l(\theta|x) = l(\hat{\theta}|x) + (\theta - \hat{\theta})l'(\hat{\theta}|x) + \frac{(\theta - \hat{\theta})^2}{2}l''(\hat{\theta}|x) + R_n (\theta, \hat{\theta})$
+
+The regularity conditions imply that $R_n(\theta_0, \hat{\theta}) \pto 0$. We also found MLE setting first derivate equal to 0, so that part drops out as well. 
+
+$-2ln(\lambda(x)) = -2 ln(\frac{L(\theta_0|x)}{L(\hat{\theta}|x)}) = -2[l(\theta_0|x) - l(\hat{\theta|x})] = 2[l(\hat{\theta}|x) - l(\theta_0|x)] = (-\frac{1}{n}l''(\hat{\theta}|x))[\sqrt{n}(\hat{\theta} - \theta_0)]^2 - R_n(\theta_0, \hat{\theta})$
+
+1) $-\frac{1}{n}l''(\hat{\theta}|x) \pto I_1(\theta_0)$
+
+2) $\sqrt{n}(\hat{\theta} - \theta_0) \dto N(0, I_1^{-1}(\theta_0))$
+
+$\implies -2ln(\lambda(x)) = \left[ (-\frac{1}{n}l''(\hat{\theta}|x))^{1/2} \sqrt{n}(\hat{\theta} - \theta_0) \right]^2 - R_n(\theta_0, \hat{\theta}) \dto [\sqrt{I_1(\theta_0)} N(0, I_1^{-1}(\theta_0))]^2 = [N(0,1)]^2 = \chi^2_1$
+
+\underline{Notes}:
+
+1) Wilks' original theorem only works for simple Null hypotheses
+
+2) Intuitively, I should just be able to reject if i) $|\hat{\theta} - \theta_0|$ is large or ii) $|\psi(x;\theta_0)|$ is large
 
 \end{document}
